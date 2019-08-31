@@ -1,12 +1,24 @@
-import React, { useEffect, useRef } from 'react';
+import React, { CSSProperties, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 interface HTMLVideoElementProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
     srcObject: MediaSource | null;
 }
+
+const logDeviceInformation = () => {
+    navigator.mediaDevices.enumerateDevices()
+        .then(function (devices) {
+            devices.forEach(function (device) {
+                console.log(device.kind + ': ' + device.label +
+                    ' id = ' + device.deviceId);
+            });
+        })
+        .catch(function (err) {
+            console.log(err.name + ': ' + err.message);
+        });
+};
 
 const VideoElement: React.FC<HTMLVideoElementProps> = ({ srcObject = null, muted = false, ...rest }) => {
     const videoElement = useRef<HTMLVideoElement>(null);
@@ -25,21 +37,59 @@ const VideoElement: React.FC<HTMLVideoElementProps> = ({ srcObject = null, muted
     return <video {...rest} ref={videoElement}/>;
 };
 
-class VideoView extends React.Component {
+interface VideoViewProps {
+    title: string;
+}
+
+interface VideoViewState {
+    source: MediaStream | null;
+}
+
+class VideoView extends React.Component<VideoViewProps, VideoViewState> {
     state = {
         source: null
     };
 
-    componentDidMount() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(this.handleVideo)
-            .catch(this.videoError);
-    }
-
-    handleVideo = (stream: MediaStream) => {
+    private handleVideo = (stream: MediaStream) => {
+        logDeviceInformation();
         this.setState({
             source: stream
         });
+    };
+
+    private handleStart = () => {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(this.handleVideo)
+            .catch(this.videoError);
+    };
+
+    private handlePause = () => {
+        const maybeStream = this.state.source;
+        if (null === maybeStream) {
+            return;
+        }
+        const stream = maybeStream as MediaStream;
+        stream.getVideoTracks().forEach(track => track.enabled=false);
+    };
+
+    private handleContinue = () => {
+        const maybeStream = this.state.source;
+        if (null === maybeStream) {
+            return;
+        }
+        const stream = maybeStream as MediaStream;
+        stream.getVideoTracks().forEach(track => track.enabled=true);
+    };
+
+
+    private handleStop = () => {
+        const maybeStream = this.state.source;
+        if (null === maybeStream) {
+            return;
+        }
+        const stream = maybeStream as MediaStream;
+        stream.getVideoTracks().forEach(track => track.stop());
+        this.setState({ source: null });
     };
 
     videoError = (err: Error) => {
@@ -47,20 +97,36 @@ class VideoView extends React.Component {
     };
 
     render() {
+        const topStyles: CSSProperties = {
+            display: 'flex'
+        };
+        const controlStyles: CSSProperties = {
+            display: 'flex',
+            flexDirection: 'column'
+        };
         return (
-            <VideoElement id="video-chat" srcObject={this.state.source} autoPlay={true}/>
+            <div style={topStyles}>
+                <h1>{this.props.title}</h1>
+                <div style={controlStyles}>
+                    <button onClick={this.handleStart}>start</button>
+                    <button onClick={this.handlePause}>pause</button>
+                    <button onClick={this.handleContinue}>continue</button>
+                    <button onClick={this.handleStop}>stop</button>
+                </div>
+                <VideoElement id="video-chat" srcObject={this.state.source} autoPlay={true}/>
+            </div>
         );
     }
 }
 
 const renderApplication = () => {
     ReactDOM.render(<div>
-        <VideoView/>
-        <App/>
+        <VideoView title={'one'}/>
+        <VideoView title={'two'}/>
     </div>, document.getElementById('root'));
 };
 
-
+logDeviceInformation();
 renderApplication();
 
 // If you want your app to work offline and load faster, you can change
