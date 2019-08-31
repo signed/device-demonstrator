@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import { MediaStreamTrackView } from './MediaStreamTrackView';
 import { VideoElement } from './VideoElement';
 
 export interface VideoViewProps {
@@ -58,12 +59,17 @@ export class VideoView extends React.Component<VideoViewProps, VideoViewState> {
         const topStyles: CSSProperties = {
             display: 'flex'
         };
+
         const controlStyles: CSSProperties = {
             display: 'flex',
             flexDirection: 'column'
         };
 
-        const tracks = this.tracks().map(track => (<li key={track.id}>{track.id + ' enabled: ' + track.enabled + ' kind: ' + track.kind + ' label: ' + track.label + ' muted: ' + track.muted + ' readyState: ' + track.readyState}</li>));
+        const tracks = this.tracks().map(track => {
+            return (<li key={track.id}>
+                <MediaStreamTrackView enabled={track.enabled} id={track.id} kind={track.kind} label={track.label} muted={track.muted} readyState={track.readyState} track={track}/>
+            </li>);
+        });
         return (
             <div style={topStyles}>
                 <h1>{this.props.title}</h1>

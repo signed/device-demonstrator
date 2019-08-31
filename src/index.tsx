@@ -20,7 +20,6 @@ const logDeviceInformation = () => {
 const renderApplication = () => {
     ReactDOM.render(<div>
         <VideoView title={'one'}/>
-        <VideoView title={'two'}/>
     </div>, document.getElementById('root'));
 };
 
