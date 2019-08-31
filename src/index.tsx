@@ -4,7 +4,7 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 interface HTMLVideoElementProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
-    srcObject: MediaSource | null;
+    srcObject: MediaStream | null;
 }
 
 const logDeviceInformation = () => {
@@ -46,54 +46,48 @@ interface VideoViewState {
 }
 
 class VideoView extends React.Component<VideoViewProps, VideoViewState> {
-    state = {
-        source: null
-    };
 
-    private handleVideo = (stream: MediaStream) => {
-        logDeviceInformation();
-        this.setState({
-            source: stream
-        });
-    };
+    constructor(props: VideoViewProps) {
+        super(props);
+        this.state = { source: null}
+    }
 
     private handleStart = () => {
         navigator.mediaDevices.getUserMedia({ video: true })
-            .then(this.handleVideo)
-            .catch(this.videoError);
+            .then((stream: MediaStream) => {
+                this.setState({
+                    source: stream
+                });
+            }).catch((err: Error) => {
+                alert(err);
+            });
     };
 
     private handlePause = () => {
-        const maybeStream = this.state.source;
-        if (null === maybeStream) {
-            return;
-        }
-        const stream = maybeStream as MediaStream;
-        stream.getVideoTracks().forEach(track => track.enabled=false);
+        this.tracks().forEach(track => track.enabled = false);
+        this.triggerRender();
     };
 
     private handleContinue = () => {
-        const maybeStream = this.state.source;
-        if (null === maybeStream) {
-            return;
-        }
-        const stream = maybeStream as MediaStream;
-        stream.getVideoTracks().forEach(track => track.enabled=true);
+        this.tracks().forEach(track => track.enabled = true);
+        this.triggerRender();
     };
-
 
     private handleStop = () => {
-        const maybeStream = this.state.source;
-        if (null === maybeStream) {
-            return;
-        }
-        const stream = maybeStream as MediaStream;
-        stream.getVideoTracks().forEach(track => track.stop());
-        this.setState({ source: null });
+        this.tracks().forEach(track => track.stop());
+        this.triggerRender();
     };
 
-    videoError = (err: Error) => {
-        alert(err);
+    private tracks(): Array<MediaStreamTrack>{
+        const maybeStream = this.state.source;
+        if (null === maybeStream) {
+            return [];
+        }
+        return maybeStream.getTracks();
+    }
+
+    private handleDetach = () => {
+        this.setState({ source: null });
     };
 
     render() {
@@ -104,6 +98,8 @@ class VideoView extends React.Component<VideoViewProps, VideoViewState> {
             display: 'flex',
             flexDirection: 'column'
         };
+
+        const tracks = this.tracks().map(track => (<li key={track.id}>{track.id + ' enabled: ' + track.enabled}</li>));
         return (
             <div style={topStyles}>
                 <h1>{this.props.title}</h1>
@@ -112,10 +108,21 @@ class VideoView extends React.Component<VideoViewProps, VideoViewState> {
                     <button onClick={this.handlePause}>pause</button>
                     <button onClick={this.handleContinue}>continue</button>
                     <button onClick={this.handleStop}>stop</button>
+                    <button onClick={this.handleDetach}>detach</button>
                 </div>
                 <VideoElement id="video-chat" srcObject={this.state.source} autoPlay={true}/>
+                <div>
+                    <h2>tracks</h2>
+                    <ul>
+                        {tracks}
+                    </ul>
+                </div>
             </div>
         );
+    }
+
+    private triggerRender() {
+        this.setState(this.state);
     }
 }
 
