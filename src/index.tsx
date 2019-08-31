@@ -49,7 +49,7 @@ class VideoView extends React.Component<VideoViewProps, VideoViewState> {
 
     constructor(props: VideoViewProps) {
         super(props);
-        this.state = { source: null}
+        this.state = { source: null };
     }
 
     private handleStart = () => {
@@ -59,8 +59,8 @@ class VideoView extends React.Component<VideoViewProps, VideoViewState> {
                     source: stream
                 });
             }).catch((err: Error) => {
-                alert(err);
-            });
+            alert(err);
+        });
     };
 
     private handlePause = () => {
@@ -78,7 +78,7 @@ class VideoView extends React.Component<VideoViewProps, VideoViewState> {
         this.triggerRender();
     };
 
-    private tracks(): Array<MediaStreamTrack>{
+    private tracks(): Array<MediaStreamTrack> {
         const maybeStream = this.state.source;
         if (null === maybeStream) {
             return [];
@@ -99,7 +99,7 @@ class VideoView extends React.Component<VideoViewProps, VideoViewState> {
             flexDirection: 'column'
         };
 
-        const tracks = this.tracks().map(track => (<li key={track.id}>{track.id + ' enabled: ' + track.enabled}</li>));
+        const tracks = this.tracks().map(track => (<li key={track.id}>{track.id + ' enabled: ' + track.enabled + ' kind: ' + track.kind + ' label: ' + track.label + ' muted: ' + track.muted + ' readyState: ' + track.readyState}</li>));
         return (
             <div style={topStyles}>
                 <h1>{this.props.title}</h1>
