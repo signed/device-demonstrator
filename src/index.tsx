@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { Hide } from './Hide';
 import { BigScreen } from './BigScreen';
 import { CameraPicker } from './CameraPicker';
 import { Device, RecordingDirector } from './RecordingDirector';
@@ -37,8 +38,10 @@ const renderApplication = () => {
             <CameraPicker recordingDirector={recordingDirector}/>
             <BigScreen recordingDirector={recordingDirector}/>
         </div>
-        <VideoView title={'one'}/>
-        <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
+        <Hide hide={true}>
+            <VideoView title={'one'}/>
+            <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
+        </Hide>
     </div>, document.getElementById('root'));
 };
 
