@@ -38,9 +38,13 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
         return (
             <div>
                 <h4>{this.props.device.label}</h4>
-                {this.state !== undefined && <VideoElement width={150} srcObject={this.state.stream} autoPlay={true}/>}
+                {this.state !== undefined && <VideoElement onClick={this.handleSelect} width={150} srcObject={this.state.stream} autoPlay={true}/>}
             </div>
         );
+    }
+
+    private handleSelect = () => {
+        this.props.streamSource.selectCamera(this.props.device)
     }
 }
 
