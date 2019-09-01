@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { Json } from './Json';
 import * as serviceWorker from './serviceWorker';
 import { VideoView } from './VideoView';
 
@@ -11,8 +12,7 @@ const logDeviceInformation = () => {
                 console.log(device.kind + ': ' + device.label +
                     ' id = ' + device.deviceId);
             });
-        })
-        .catch(function (err) {
+        }).catch(function (err) {
             console.log(err.name + ': ' + err.message);
         });
 };
@@ -20,6 +20,7 @@ const logDeviceInformation = () => {
 const renderApplication = () => {
     ReactDOM.render(<div>
         <VideoView title={'one'}/>
+        <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
     </div>, document.getElementById('root'));
 };
 
