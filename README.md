@@ -12,6 +12,9 @@ Also the stream handling logic should be moved out of the react components.
 They should only get a stream and render it.
 Lets see where this is going. 
 
+## [Settings vs. constraints](https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints)
+Constraints are a way to specify what values you need, want, and are willing to accept for the various constrainable properties.
+Settings are the actual values of each constrainable property at the current time. 
 
 ## Opportunities
 - deploy the sample app as github pages of this project
