@@ -12,6 +12,11 @@ Also the stream handling logic should be moved out of the react components.
 They should only get a stream and render it.
 Lets see where this is going. 
 
+
+## Opportunities
+- deploy the sample app as github pages of this project
+- automate deployment with github actions
+
 ## Available Scripts
 
 In the project directory, you can run:
