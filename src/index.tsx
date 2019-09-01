@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { BigScreen } from './BigScreen';
 import { CameraPicker } from './CameraPicker';
 import { Device, RecordingDirector } from './RecordingDirector';
 import { Json } from './Json';
@@ -28,8 +29,14 @@ const logDeviceInformation = () => {
 };
 
 const renderApplication = () => {
+    const style: CSSProperties = {
+        display: 'flex'
+    };
     ReactDOM.render(<div>
-        <CameraPicker recordingDirector={recordingDirector}/>
+        <div style={style}>
+            <CameraPicker recordingDirector={recordingDirector}/>
+            <BigScreen recordingDirector={recordingDirector}/>
+        </div>
         <VideoView title={'one'}/>
         <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
     </div>, document.getElementById('root'));

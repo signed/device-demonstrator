@@ -1,6 +1,9 @@
 export type Device = Pick<MediaDeviceInfo, 'groupId' | 'deviceId' | 'kind' | 'label'>;
 
+export type OnCameraSelectionChangedListener = (newCamera: Device | void) => void;
+
 export class RecordingDirector {
+    private onCameraSelectionChangedListener: Set<OnCameraSelectionChangedListener> = new Set<OnCameraSelectionChangedListener>();
     private readonly devices: Array<Device> = [];
     private selectedCamera: Device | undefined;
 
@@ -19,6 +22,22 @@ export class RecordingDirector {
 
     selectCamera(device: Device) {
         this.selectedCamera = device;
-        alert(JSON.stringify(this.selectedCamera, null, 2));
+        this.onCameraSelectionChangedListener.forEach(listener => listener(this.selectedCamera));
     }
+
+    addOnCameraSelectionChanged(listener: OnCameraSelectionChangedListener) {
+        this.onCameraSelectionChangedListener.add(listener);
+        listener(this.selectedCamera);
+    }
+
+    removeOnCameraSelectionChanged(listener: OnCameraSelectionChangedListener) {
+        this.onCameraSelectionChangedListener.delete(listener);
+    }
+
+    close(stream: MediaStream | null): void {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
+
 }

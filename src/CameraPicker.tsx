@@ -27,10 +27,7 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
 
     componentWillUnmount(): void {
         const stream = this.state.stream;
-        if (stream === null) {
-            return;
-        }
-        stream.getTracks().forEach(track => track.stop());
+        this.props.streamSource.close(stream);
         this.setState({ stream: null });
     }
 
@@ -81,8 +78,8 @@ export class CameraPicker extends React.Component<CameraPickerProps, CameraPicke
     private handleShowPreview = () => {
         this.setState({ showPreviews: true });
     };
+
     private handleHidePreview = () => {
         this.setState({ showPreviews: false });
     };
-
 }
