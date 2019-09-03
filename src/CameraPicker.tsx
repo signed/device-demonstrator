@@ -3,7 +3,7 @@ import { VideoElement } from './VideoElement';
 import { Device, RecordingDirector } from './RecordingDirector';
 
 export interface CameraPreviewProps {
-    streamSource: RecordingDirector;
+    recordingDirector: RecordingDirector;
     device: Device;
 }
 
@@ -20,14 +20,14 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
     }
 
     componentDidMount(): void {
-        this.props.streamSource.videoStreamFor(this.props.device)
+        this.props.recordingDirector.videoStreamFor(this.props.device)
             .then(stream => this.setState({ stream }))
             .catch(() => this.setState({ streamError: true }));
     }
 
     componentWillUnmount(): void {
         const stream = this.state.stream;
-        this.props.streamSource.close(stream);
+        this.props.recordingDirector.close(stream);
         this.setState({ stream: null });
     }
 
@@ -41,7 +41,7 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
     }
 
     private handleSelect = () => {
-        this.props.streamSource.selectCamera(this.props.device)
+        this.props.recordingDirector.selectCamera(this.props.device)
     }
 }
 
@@ -62,7 +62,7 @@ export class CameraPicker extends React.Component<CameraPickerProps, CameraPicke
 
     render() {
         const button = this.state.showPreviews ? <button onClick={this.handleHidePreview}>Hide Previews</button> : <button onClick={this.handleShowPreview}>Show Previews</button>;
-        const previews = this.state.showPreviews ? this.props.recordingDirector.cameras().map(device => <CameraPreview key={device.deviceId} device={device} streamSource={this.props.recordingDirector}/>) : null;
+        const previews = this.state.showPreviews ? this.props.recordingDirector.cameras().map(device => <CameraPreview key={device.deviceId} device={device} recordingDirector={this.props.recordingDirector}/>) : null;
         const style: CSSProperties = {
             display: 'flex',
             flexDirection: 'column'
