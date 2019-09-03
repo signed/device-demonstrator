@@ -21,6 +21,14 @@ export class RecordingDirector {
     }
 
     selectCamera(device: Device) {
+        const alreadySelected = this.selectedCamera !== undefined
+            && this.selectedCamera.kind === device.kind
+            && this.selectedCamera.groupId === device.groupId
+            && this.selectedCamera.deviceId === device.deviceId;
+        if (alreadySelected) {
+            console.log('already selected');
+            return;
+        }
         this.selectedCamera = device;
         this.onCameraSelectionChangedListener.forEach(listener => listener(this.selectedCamera));
     }
