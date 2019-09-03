@@ -20,16 +20,16 @@ export class RecordingDirector {
         return navigator.mediaDevices.getUserMedia({ video: { deviceId: device.deviceId } });
     }
 
-    selectCamera(device: Device) {
+    selectCamera(camera: Device) {
         const alreadySelected = this.selectedCamera !== undefined
-            && this.selectedCamera.kind === device.kind
-            && this.selectedCamera.groupId === device.groupId
-            && this.selectedCamera.deviceId === device.deviceId;
+            && this.selectedCamera.kind === camera.kind
+            && this.selectedCamera.groupId === camera.groupId
+            && this.selectedCamera.deviceId === camera.deviceId;
         if (alreadySelected) {
             console.log('already selected');
             return;
         }
-        this.selectedCamera = device;
+        this.selectedCamera = camera;
         this.onCameraSelectionChangedListener.forEach(listener => listener(this.selectedCamera));
     }
 
