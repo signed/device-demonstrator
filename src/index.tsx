@@ -11,7 +11,7 @@ import { VideoView } from './VideoView';
 
 const recordingDirector = new RecordingDirector();
 
-const logDeviceInformation = () => {
+const fetchDevices = () => {
     navigator.mediaDevices.enumerateDevices()
         .then(function (mediaDeviceInfos) {
             const toDevice = (mediaDeviceInfo: MediaDeviceInfo): Device => {
@@ -45,7 +45,8 @@ const renderApplication = () => {
     </div>, document.getElementById('root'));
 };
 
-logDeviceInformation();
+fetchDevices();
+navigator.mediaDevices.addEventListener('devicechange', () => fetchDevices());
 renderApplication();
 
 // If you want your app to work offline and load faster, you can change
