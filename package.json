@@ -14,6 +14,8 @@
     "uuidv4": "5.0.1"
   },
   "scripts": {
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -35,6 +37,8 @@
     ]
   },
   "devDependencies": {
-    "@types/uuidv4": "2.0.0"
-  }
+    "@types/uuidv4": "2.0.0",
+    "gh-pages": "2.1.1"
+  },
+  "homepage": "https://signed.github.io/device-demonstrator"
 }
