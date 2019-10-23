@@ -3,7 +3,7 @@
 I did not know much about the browser device api and wanted to learn more.
 This project is the result of my learning process.
 Current focus was on camera devices, more may follow later.
-I intentionally left out redux to keep thinks simple.
+I intentionally left out redux to keep it simple.
 
 In the current state you can open/close a preview of all connected cameras and select one to display on the big screen.
 Right now the code does not handle a lot of error cases, e.g. unplugging a camera.
