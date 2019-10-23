@@ -1,5 +1,7 @@
 ## What is this all about
 
+A version of the page is can be accessed at https://signed.github.io/device-demonstrator/.
+
 I did not know much about the browser device api and wanted to learn more.
 This project is the result of my learning process.
 Current focus was on camera devices, more may follow later.
