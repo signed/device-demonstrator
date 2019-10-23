@@ -40,7 +40,9 @@ export class BigScreen extends React.Component<BigScreenProps, BigScreenState> {
         return (
             <div>
                 {<VideoElement srcObject={this.state.stream} autoPlay={true}/>}
+                <div>{this.state.stream.id}</div>
             </div>
+
         );
     }
 

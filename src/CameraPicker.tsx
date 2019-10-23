@@ -37,10 +37,12 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
     }
 
     render() {
+        const maybeStream = this.state.stream;
         return (
             <div>
                 <h4>{this.props.device.label}</h4>
-                {this.state !== undefined && <VideoElement onClick={this.handleSelect} width={150} srcObject={this.state.stream} autoPlay={true}/>}
+                {maybeStream !== null && <div>{maybeStream.id}</div>}
+                {this.state !== undefined && <VideoElement onClick={this.handleSelect} width={150} srcObject={maybeStream} autoPlay={true}/>}
             </div>
         );
     }
