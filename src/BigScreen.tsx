@@ -1,5 +1,5 @@
 import React from 'react';
-import { Device, RecordingDirector } from './RecordingDirector';
+import { Device, MediaStreamSubscription, RecordingDirector } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
 
 export interface BigScreenProps {
@@ -9,6 +9,7 @@ export interface BigScreenProps {
 export interface BigScreenState {
     device: Device | void;
     stream: MediaStream | null;
+    mediaStreamSubscription: MediaStreamSubscription | undefined;
     streamError: boolean;
 }
 
@@ -16,7 +17,7 @@ export class BigScreen extends React.Component<BigScreenProps, BigScreenState> {
 
     constructor(props: BigScreenProps) {
         super(props);
-        this.state = { streamError: false, stream: null, device: undefined };
+        this.state = { streamError: false, stream: null, mediaStreamSubscription: undefined, device: undefined };
     }
 
     componentDidMount(): void {
@@ -49,14 +50,19 @@ export class BigScreen extends React.Component<BigScreenProps, BigScreenState> {
             if (device === undefined) {
                 return;
             }
-            this.props.recordingDirector.videoStreamFor(device)
+            const mediaStreamSubscription = this.props.recordingDirector.videoStreamSubscriptionFor(device);
+            this.setState({ mediaStreamSubscription });
+            mediaStreamSubscription.stream
                 .then(stream => this.setState({ stream }))
                 .catch(() => this.setState({ streamError: true }));
         });
     };
 
     private closeExistingStream() {
-        this.props.recordingDirector.close(this.state.stream);
-        this.setState({ stream: null });
+        const maybeSubscription = this.state.mediaStreamSubscription;
+        if (maybeSubscription !== undefined) {
+            maybeSubscription.cancel();
+            this.setState({ stream: null, mediaStreamSubscription: undefined });
+        }
     }
 }

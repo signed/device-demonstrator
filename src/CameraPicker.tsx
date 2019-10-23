@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { VideoElement } from './VideoElement';
-import { Device, RecordingDirector } from './RecordingDirector';
+import { Device, MediaStreamSubscription, RecordingDirector } from './RecordingDirector';
 
 export interface CameraPreviewProps {
     recordingDirector: RecordingDirector;
@@ -8,6 +8,7 @@ export interface CameraPreviewProps {
 }
 
 export interface CameraPreviewState {
+    mediaStreamSubscription: MediaStreamSubscription | undefined
     stream: MediaStream | null;
     streamError: boolean;
 }
@@ -16,19 +17,23 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
 
     constructor(props: CameraPreviewProps) {
         super(props);
-        this.state = { streamError: false, stream: null };
+        this.state = { mediaStreamSubscription: undefined, streamError: false, stream: null };
     }
 
     componentDidMount(): void {
-        this.props.recordingDirector.videoStreamFor(this.props.device)
+        const mediaStreamSubscription = this.props.recordingDirector.videoStreamSubscriptionFor(this.props.device);
+        this.setState({ mediaStreamSubscription });
+        mediaStreamSubscription.stream
             .then(stream => this.setState({ stream }))
             .catch(() => this.setState({ streamError: true }));
     }
 
     componentWillUnmount(): void {
-        const stream = this.state.stream;
-        this.props.recordingDirector.close(stream);
-        this.setState({ stream: null });
+        const maybeSubscription = this.state.mediaStreamSubscription;
+        if (maybeSubscription !== undefined) {
+            maybeSubscription.cancel();
+            this.setState({stream:null, mediaStreamSubscription: undefined})
+        }
     }
 
     render() {
