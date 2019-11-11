@@ -37,6 +37,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/dom": "6.10.1",
+    "@testing-library/jest-dom": "4.2.3",
+    "@testing-library/react": "9.3.2",
     "@types/uuidv4": "5.0.0",
     "gh-pages": "2.1.1"
   },
