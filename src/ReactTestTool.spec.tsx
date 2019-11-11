@@ -13,4 +13,5 @@ it('callback should be executed', () => {
     const nothing = jest.fn();
     const { getByText } = render(<Button onClick={nothing} label={'hello'}/>);
     fireEvent.click(getByText('hello'));
+    expect(nothing).toHaveBeenCalled()
 });
