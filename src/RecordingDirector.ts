@@ -1,4 +1,4 @@
-import uuid from 'uuidv4';
+import { uuid } from 'uuidv4';
 
 export type Device = Pick<MediaDeviceInfo, 'groupId' | 'deviceId' | 'kind' | 'label'>;
 
