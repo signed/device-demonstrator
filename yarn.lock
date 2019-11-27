@@ -1280,7 +1280,7 @@
     react-lifecycles-compat "^3.0.4"
     warning "^3.0.0"
 
-"@storybook/addon-actions@^5.3.0-beta.9":
+"@storybook/addon-actions@5.3.0-beta.9":
   version "5.3.0-beta.9"
   resolved "https://registry.yarnpkg.com/@storybook/addon-actions/-/addon-actions-5.3.0-beta.9.tgz#c60afedb49a63ee62a83f3c097327f9329e2ca3a"
   integrity sha512-MSaz35DWZyk9NOt0L3MFTxy3lVkjm1Fct7pQJEKFdU7+tFLu5R4NzhLOexw7MxLP5POEI9OEbcpu88/6QFZWRg==
@@ -1324,7 +1324,7 @@
     react-lifecycles-compat "^3.0.4"
     react-select "^3.0.0"
 
-"@storybook/addon-links@^5.3.0-beta.9":
+"@storybook/addon-links@5.3.0-beta.9":
   version "5.3.0-beta.9"
   resolved "https://registry.yarnpkg.com/@storybook/addon-links/-/addon-links-5.3.0-beta.9.tgz#4c710066b6ac6d44c692a7886f5e231850e9f6bf"
   integrity sha512-WofqjKQX1pRfEk/14ozBaupvcAfcQdElIIMDj2/hvzp1iqDN2BdxqU6ZJVlEn2iXAwFnZJY0diLExB68bzAdsw==
@@ -1352,7 +1352,7 @@
     global "^4.3.2"
     util-deprecate "^1.0.2"
 
-"@storybook/addons@5.3.0-beta.9", "@storybook/addons@^5.3.0-beta.9":
+"@storybook/addons@5.3.0-beta.9":
   version "5.3.0-beta.9"
   resolved "https://registry.yarnpkg.com/@storybook/addons/-/addons-5.3.0-beta.9.tgz#16c2d4b6864709355c9002c0c33bcacc3c433f57"
   integrity sha512-VU3JhyzTrrMYt24qbqFE0FbilbL9/IkeaexPX5uUr4Nj61B2SgBJJ9kIq+fUfqbOUWaSoAkTqwagRwDU+sRqKQ==
@@ -1679,7 +1679,7 @@
     "@types/webpack" "^4.39.8"
     react-docgen-typescript-loader "^3.3.0"
 
-"@storybook/react@^5.3.0-beta.9":
+"@storybook/react@5.3.0-beta.9":
   version "5.3.0-beta.9"
   resolved "https://registry.yarnpkg.com/@storybook/react/-/react-5.3.0-beta.9.tgz#b47a16e2d8cd4520acef5b4a456e1d6ca0b1e2c0"
   integrity sha512-ieZMzSEp0wkwspZcOjRg/j3yzxmo5Qh51yHwp5YVryIu2SSD8eFx+tkticGyCooia2g3jPDYK77VKWCvYECI3A==
