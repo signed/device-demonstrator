@@ -4,7 +4,7 @@ import React from 'react';
 import { Collapse } from './Collapse';
 
 export default {
-    title: 'Hide',
+    title: 'Collapse',
     component: Collapse
 };
 
