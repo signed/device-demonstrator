@@ -46,3 +46,13 @@ export const CameraDemonstrator: React.FC<CameraDemonstratorProps> = (props) => 
         </>
     );
 };
+
+export const setupCameraDemonstrator: () => React.FC = () => {
+    const recordingDirector = new RecordingDirector();
+    const updateDevices = () => fetchDevices(recordingDirector);
+    updateDevices();
+    navigator.mediaDevices.addEventListener('devicechange', updateDevices);
+    return () => {
+        return <CameraDemonstrator recordingDirector={recordingDirector}/>;
+    }
+};
