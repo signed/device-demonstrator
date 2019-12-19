@@ -29,19 +29,27 @@ const fetchDevices = () => {
     );
 };
 
-const renderApplication = () => {
+export const CameraDemonstrator: React.FC = (props) => {
     const style: CSSProperties = {
         display: 'flex'
     };
+    return (
+        <>
+            <div style={style}>
+                <CameraPicker recordingDirector={recordingDirector}/>
+                <BigScreen recordingDirector={recordingDirector}/>
+            </div>
+            <Hide hide={true}>
+                <VideoView title={'one'}/>
+                <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
+            </Hide>
+        </>
+    );
+};
+
+const renderApplication = () => {
     ReactDOM.render(<div>
-        <div style={style}>
-            <CameraPicker recordingDirector={recordingDirector}/>
-            <BigScreen recordingDirector={recordingDirector}/>
-        </div>
-        <Hide hide={true}>
-            <VideoView title={'one'}/>
-            <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
-        </Hide>
+        <CameraDemonstrator/>
     </div>, document.getElementById('root'));
 };
 
