@@ -13,8 +13,9 @@ const renderApplication = () => {
     </div>, document.getElementById('root'));
 };
 
-fetchDevices(recordingDirector);
-navigator.mediaDevices.addEventListener('devicechange', () => fetchDevices(recordingDirector));
+const updateDevices = () => fetchDevices(recordingDirector);
+updateDevices();
+navigator.mediaDevices.addEventListener('devicechange', updateDevices);
 renderApplication();
 
 // If you want your app to work offline and load faster, you can change
