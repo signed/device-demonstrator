@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { CameraDemonstrator, fetchDevices } from './CameraDemonstrator';
+import { CameraDemonstrator, fetchDevices } from './devices/camera/CameraDemonstrator';
 import './index.css';
-import { RecordingDirector } from './RecordingDirector';
+import { RecordingDirector } from './devices/camera/RecordingDirector';
 import * as serviceWorker from './serviceWorker';
 
 const recordingDirector = new RecordingDirector();
