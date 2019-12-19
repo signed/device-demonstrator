@@ -5,14 +5,21 @@ import './index.css';
 import { RecordingDirector } from './devices/camera/RecordingDirector';
 import * as serviceWorker from './serviceWorker';
 
-const recordingDirector = new RecordingDirector();
-const updateDevices = () => fetchDevices(recordingDirector);
-updateDevices();
-navigator.mediaDevices.addEventListener('devicechange', updateDevices);
+const setupCameraDemonstrator: () => React.FC = () => {
+    const recordingDirector = new RecordingDirector();
+    const updateDevices = () => fetchDevices(recordingDirector);
+    updateDevices();
+    navigator.mediaDevices.addEventListener('devicechange', updateDevices);
+    return () => {
+        return <CameraDemonstrator recordingDirector={recordingDirector}/>;
+    }
+};
+
+const Demonstrator = setupCameraDemonstrator();
 
 const renderApplication = () => {
     ReactDOM.render(<div>
-        <CameraDemonstrator recordingDirector={recordingDirector}/>
+        <Demonstrator/>
     </div>, document.getElementById('root'));
 };
 renderApplication();
