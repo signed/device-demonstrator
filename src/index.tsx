@@ -6,16 +6,15 @@ import { RecordingDirector } from './devices/camera/RecordingDirector';
 import * as serviceWorker from './serviceWorker';
 
 const recordingDirector = new RecordingDirector();
+const updateDevices = () => fetchDevices(recordingDirector);
+updateDevices();
+navigator.mediaDevices.addEventListener('devicechange', updateDevices);
 
 const renderApplication = () => {
     ReactDOM.render(<div>
         <CameraDemonstrator recordingDirector={recordingDirector}/>
     </div>, document.getElementById('root'));
 };
-
-const updateDevices = () => fetchDevices(recordingDirector);
-updateDevices();
-navigator.mediaDevices.addEventListener('devicechange', updateDevices);
 renderApplication();
 
 // If you want your app to work offline and load faster, you can change
