@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { setupCameraDemonstrator } from './devices/camera/CameraDemonstrator';
 import './index.css';
+//import { setupCameraDemonstrator } from './devices/camera/CameraDemonstrator';
+import { inputWithCaretTrackingDemonstrator } from './input/InputWithCaretTracking';
 import * as serviceWorker from './serviceWorker';
 
-
-const Demonstrator = setupCameraDemonstrator();
+const Demonstrator = inputWithCaretTrackingDemonstrator();
 
 const renderApplication = () => {
     ReactDOM.render(<div>
