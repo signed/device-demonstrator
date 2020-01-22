@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { AsYouType } from 'libphonenumber-js/min';
 
 type SelectionDirection = 'forward' | 'backward' | 'none';
 
@@ -36,7 +37,8 @@ type Formatter = (previous: Formatted, toFormat: Changed) => Formatted;
 
 interface FormattedInputProps {
     value: string;
-    onChange: (value: string) => void;
+    onChange: (value: string) => void
+    placeholder?: string;
 }
 
 const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps> => {
@@ -91,7 +93,7 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
 
         return <>
             <div>{selection.start}/{selection.end}/{selection.direction}</div>
-            <input ref={textInputRef} type='text' placeholder='some stuff' onChange={handleChange} value={text}/>
+            <input ref={textInputRef} type='text' placeholder={props.placeholder} onChange={handleChange} value={text}/>
         </>;
     };
 };
@@ -99,12 +101,11 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
 const log: (formatter: Formatter) => Formatter = (toLog) => {
     return (previous, toFormat) => {
         const result = toLog(previous, toFormat);
-        console.log(previous.selection, previous.value);
-        console.log(toFormat.selection, toFormat.value);
-        console.log(result.selection, result.value);
+        console.log('previous', previous.selection, previous.value);
+        console.log('toFormat', toFormat.selection, toFormat.value);
+        console.log('result  ', result.selection, result.value);
         return result;
     };
-
 };
 
 const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
@@ -114,9 +115,24 @@ const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(lo
     };
 }));
 
+const PhoneNumberInput: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
+    const asYouType = new AsYouType('US');
+    const formatted = asYouType.input(toFormat.value);
+    const caret = toFormat.selection.end === toFormat.value.length ? formatted.length : toFormat.selection.end;
+    return {
+        selection: {
+            start: caret,
+            end: caret,
+            direction: 'forward'
+        },
+        value: formatted
+    };
+}));
 
 const onChange = (value: string) => console.log(value);
-
 export const inputWithCaretTrackingDemonstrator = () => () => {
-    return <UppercaseCharacters onChange={onChange} value={'banana'}/>;
+    return <>
+        <PhoneNumberInput onChange={onChange} value='' placeholder='(213) 373-4253'/>
+        <UppercaseCharacters onChange={onChange} value={'banana'}/>
+    </>;
 };
