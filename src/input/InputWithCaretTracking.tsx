@@ -52,10 +52,11 @@ export const inputWithCaretTrackingDemonstrator = () => () => {
     }, []);
 
     const handleChange = (ev: ChangeEvent<HTMLInputElement>) => {
-        let selection = select(ev.target.selectionStart ?? 0, ev.target.selectionEnd ?? 0, toSelectionDirection(ev.target.selectionDirection));
+        let inputElement = ev.target;
+        let selection = select(inputElement.selectionStart ?? 0, inputElement.selectionEnd ?? 0, toSelectionDirection(inputElement.selectionDirection));
         log('change', selection);
         setSelection(selection);
-        setText(ev.target.value.toUpperCase());
+        setText(inputElement.value.toUpperCase());
     };
 
     useEffect(() => {
