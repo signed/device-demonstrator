@@ -96,12 +96,24 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
     };
 };
 
-const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith((previous, toFormat) => {
+const log: (formatter: Formatter) => Formatter = (toLog) => {
+    return (previous, toFormat) => {
+        const result = toLog(previous, toFormat);
+        console.log(previous.selection, previous.value);
+        console.log(toFormat.selection, toFormat.value);
+        console.log(result.selection, result.value);
+        return result;
+    };
+
+};
+
+const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
     return {
         selection: toFormat.selection,
         value: toFormat.value.toUpperCase()
     };
-});
+}));
+
 
 const onChange = (value: string) => console.log(value);
 
