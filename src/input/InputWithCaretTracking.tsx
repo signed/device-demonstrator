@@ -12,10 +12,6 @@ const select = (start: number, end: number, direction: SelectionDirection): Sele
     return { start, end, direction };
 };
 
-const log = (source: string, selection: Selection) => {
-    console.log(`${source} ${selection.start}-${selection.end} ${selection.direction}`);
-};
-
 const toSelectionDirection = (value: String | null | undefined): SelectionDirection => {
     if (value === null || value === undefined) {
         return 'none';
@@ -58,7 +54,6 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
                 const start = textInput?.selectionStart ?? 0;
                 const end = textInput?.selectionEnd ?? 0;
                 let selection = select(start, end, toSelectionDirection(textInput?.selectionDirection));
-                log('listener', selection);
                 setSelection(selection);
             };
             textInput.addEventListener('keyup', writeCaretPositionToState);
