@@ -26,6 +26,8 @@ const toSelectionDirection = (value: String | null | undefined): SelectionDirect
     throw new Error('this should not happen');
 };
 
+
+
 export const inputWithCaretTrackingDemonstrator = () => () => {
     const [text, setText] = useState('initial text');
     const [selection, setSelection] = useState(select(0, 0, 'none'));
@@ -53,7 +55,8 @@ export const inputWithCaretTrackingDemonstrator = () => () => {
 
     const handleChange = (ev: ChangeEvent<HTMLInputElement>) => {
         let inputElement = ev.target;
-        let selection = select(inputElement.selectionStart ?? 0, inputElement.selectionEnd ?? 0, toSelectionDirection(inputElement.selectionDirection));
+        let caretFallback = inputElement.value.length;
+        let selection = select(inputElement.selectionStart ?? caretFallback, inputElement.selectionEnd ?? caretFallback, toSelectionDirection(inputElement.selectionDirection));
         log('change', selection);
         setSelection(selection);
         setText(inputElement.value.toUpperCase());
@@ -64,7 +67,7 @@ export const inputWithCaretTrackingDemonstrator = () => () => {
     });
 
     return <>
-        <div>{selection.start}/{selection.end}</div>
+        <div>{selection.start}/{selection.end}/{selection.direction}</div>
         <input ref={textInputRef} type='text' placeholder='some stuff' onChange={handleChange} value={text}/>
     </>;
 };
