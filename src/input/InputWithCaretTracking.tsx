@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 type SelectionDirection = 'forward' | 'backward' | 'none';
 
@@ -31,12 +31,12 @@ interface Formatted {
     readonly value: string;
 }
 
-interface Altered {
+interface Changed {
     readonly selection: Selection;
     readonly value: string;
 }
 
-type Formatter = (previous: Formatted, toFormat: Altered) => Formatted;
+type Formatter = (previous: Formatted, toFormat: Changed) => Formatted;
 
 interface FormattedInputProps {
     value: string;
@@ -69,25 +69,26 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
             };
         }, []);
 
-        const handleChange = (ev: ChangeEvent<HTMLInputElement>) => {
+        const { onChange } = props;
+        const handleChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
             let inputElement = ev.target;
             let caretFallback = inputElement.value.length;
-            let currentSelection = select(inputElement.selectionStart ?? caretFallback, inputElement.selectionEnd ?? caretFallback, toSelectionDirection(inputElement.selectionDirection));
+            let selectionAfterChange = select(inputElement.selectionStart ?? caretFallback, inputElement.selectionEnd ?? caretFallback, toSelectionDirection(inputElement.selectionDirection));
             const previous = { selection, value: text };
-            const toFormat = { selection: currentSelection, value: inputElement.value };
+            const toFormat = { selection: selectionAfterChange, value: inputElement.value };
             const formatted = formatter(previous, toFormat);
             // selection has to be stored to give the formatter a chance to chance to position the
             // caret left of a formatting character
-            setSelection(formatted.selection);
+            setSelection(() => formatted.selection);
             if (previous.value === formatted.value) {
                 // todo there was a change made in the dom that we have
-                // 1. to revert because the text was formatted again
+                // 1. to revert because formatting the changed input resulted in the previous text
                 // 2. restore the selection
                 return;
             }
-            setText(formatted.value);
-            props.onChange(formatted.value);
-        };
+            setText(() => formatted.value);
+            onChange(formatted.value);
+        }, [selection, text, onChange]);
 
         useEffect(() => {
             textInputRef.current?.setSelectionRange(selection.start, selection.end, selection.direction);
