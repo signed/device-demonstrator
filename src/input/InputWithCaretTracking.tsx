@@ -43,7 +43,7 @@ interface FormattedInputProps {
 
 const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps> => {
     return (props) => {
-        const [text, setText] = useState(props.value);
+        const [value, setValue] = useState(props.value);
         const [selection, setSelection] = useState(select(0, 0, 'none'));
         const textInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,7 +71,7 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
             let inputElement = ev.target;
             let caretFallback = inputElement.value.length;
             let selectionAfterChange = select(inputElement.selectionStart ?? caretFallback, inputElement.selectionEnd ?? caretFallback, toSelectionDirection(inputElement.selectionDirection));
-            const previous = { selection, value: text };
+            const previous = { selection, value };
             const toFormat = { selection: selectionAfterChange, value: inputElement.value };
             const formatted = formatter(previous, toFormat);
             // selection has to be stored to give the formatter a chance to chance to position the
@@ -83,9 +83,9 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
                 // 2. restore the selection
                 return;
             }
-            setText(() => formatted.value);
+            setValue(() => formatted.value);
             onChange(formatted.value);
-        }, [selection, text, onChange]);
+        }, [selection, value, onChange]);
 
         useEffect(() => {
             textInputRef.current?.setSelectionRange(selection.start, selection.end, selection.direction);
@@ -93,7 +93,7 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
 
         return <>
             <div>{selection.start}/{selection.end}/{selection.direction}</div>
-            <input ref={textInputRef} type='text' placeholder={props.placeholder} onChange={handleChange} value={text}/>
+            <input ref={textInputRef} type='text' placeholder={props.placeholder} onChange={handleChange} value={value}/>
         </>;
     };
 };
