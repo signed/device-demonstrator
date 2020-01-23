@@ -115,7 +115,7 @@ const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(lo
     };
 }));
 
-const PhoneNumberInput: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
+const PhoneNumberDigits: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
     const asYouType = new AsYouType('US');
     const formatted = asYouType.input(toFormat.value);
     const caret = toFormat.selection.end === toFormat.value.length ? formatted.length : toFormat.selection.end;
@@ -132,7 +132,7 @@ const PhoneNumberInput: React.FC<FormattedInputProps> = inputFormattedWith(log((
 const onChange = (value: string) => console.log(value);
 export const inputWithCaretTrackingDemonstrator = () => () => {
     return <>
-        <PhoneNumberInput onChange={onChange} value='' placeholder='(213) 373-4253'/>
+        <PhoneNumberDigits onChange={onChange} value='' placeholder='(213) 373-4253'/>
         <UppercaseCharacters onChange={onChange} value={'banana'}/>
     </>;
 };
