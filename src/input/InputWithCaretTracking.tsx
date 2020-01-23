@@ -48,14 +48,14 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
         const textInputRef = useRef<HTMLInputElement>(null);
 
         useEffect(() => {
-            let textInput = textInputRef.current;
+            const textInput = textInputRef.current;
             if (textInput === null) {
                 return;
             }
-            let writeCaretPositionToState = () => {
+            const writeCaretPositionToState = () => {
                 const start = textInput?.selectionStart ?? 0;
                 const end = textInput?.selectionEnd ?? 0;
-                let selection = select(start, end, toSelectionDirection(textInput?.selectionDirection));
+                const selection = select(start, end, toSelectionDirection(textInput?.selectionDirection));
                 setSelection(selection);
             };
             textInput.addEventListener('keyup', writeCaretPositionToState);
@@ -68,9 +68,9 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
 
         const { onChange } = props;
         const handleChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
-            let inputElement = ev.target;
-            let caretFallback = inputElement.value.length;
-            let selectionAfterChange = select(inputElement.selectionStart ?? caretFallback, inputElement.selectionEnd ?? caretFallback, toSelectionDirection(inputElement.selectionDirection));
+            const inputElement = ev.target;
+            const caretFallback = inputElement.value.length;
+            const selectionAfterChange = select(inputElement.selectionStart ?? caretFallback, inputElement.selectionEnd ?? caretFallback, toSelectionDirection(inputElement.selectionDirection));
             const previous = { selection, value };
             const toFormat = { selection: selectionAfterChange, value: inputElement.value };
             const formatted = formatter(previous, toFormat);
