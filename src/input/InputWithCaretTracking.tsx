@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { AsYouType } from 'libphonenumber-js/min';
 
 type SelectionDirection = 'forward' | 'backward' | 'none';
@@ -91,10 +91,7 @@ const inputFormattedWith = (formatter: Formatter): React.FC<FormattedInputProps>
             textInputRef.current?.setSelectionRange(selection.start, selection.end, selection.direction);
         });
 
-        return <>
-            <div>{selection.start}/{selection.end}/{selection.direction}</div>
-            <input ref={textInputRef} type='text' placeholder={props.placeholder} onChange={handleChange} value={value}/>
-        </>;
+        return <input ref={textInputRef} type='text' placeholder={props.placeholder} onChange={handleChange} value={value}/>;
     };
 };
 
@@ -115,6 +112,31 @@ const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(lo
     };
 }));
 
+type CountryCode = string;
+
+interface CountrySelectionProps {
+    onChange: (country: CountryCode) => void;
+    value: CountryCode;
+}
+
+const CountrySelection: React.FC<CountrySelectionProps> = props => {
+    const {onChange} = props;
+    const callback = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+        onChange(event.target.value);
+    }, [onChange]);
+    return (
+        <select onChange={callback} value={props.value}>
+            <option value='US'>United States of America</option>
+            <option value='FR'>France</option>
+            <option value='DE'>Deutschland</option>
+        </select>
+    )
+};
+
+interface PhoneNumberInputProps {
+
+}
+
 const PhoneNumberDigits: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
     const asYouType = new AsYouType('US');
     const formatted = asYouType.input(toFormat.value);
@@ -129,10 +151,33 @@ const PhoneNumberDigits: React.FC<FormattedInputProps> = inputFormattedWith(log(
     };
 }));
 
+const PhoneNumberInput: React.FC<PhoneNumberInputProps> = (props) => {
+    const [countryCode, setCountryCode] = useState('DE');
+    const [formattedDigits, setFormattedDigits] = useState('');
+
+    const onCountryCodeChange = useCallback((countryCode) => {
+        setCountryCode(() => countryCode);
+    }, []);
+    const onFormattedDigitsChange = useCallback((formattedDigits)=> {
+        setFormattedDigits(() => formattedDigits);
+    }, []);
+
+    const style: CSSProperties = {
+        display: 'flex',
+        flexDirection: 'row'
+    };
+    return (<div style={style}>
+        <CountrySelection onChange={onCountryCodeChange} value={countryCode}/>
+        <PhoneNumberDigits value={formattedDigits} onChange={onFormattedDigitsChange}/>
+    </div>);
+};
+
 const onChange = (value: string) => console.log(value);
 export const inputWithCaretTrackingDemonstrator = () => () => {
     return <>
+        <CountrySelection onChange={onChange} value='FR'/>
         <PhoneNumberDigits onChange={onChange} value='' placeholder='(213) 373-4253'/>
         <UppercaseCharacters onChange={onChange} value={'banana'}/>
+        <PhoneNumberInput/>
     </>;
 };
