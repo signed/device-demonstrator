@@ -46,7 +46,8 @@ export const useSelection = (): [Selection, SelectionUpdater, React.MutableRefOb
     const textInputRef = useCallbackRef<HTMLInputElement>(null, (newValue) => {
         //this is vital to trigger a re-render, because otherwise useSelection
         //is not called again and the listeners to track the selection
-        //are not added to the input element
+        //are not added to the input element.
+        //That is why updateIfNeeded is not used here.
         setSelection(extractSelectionFrom(newValue));
     });
     const textInput = textInputRef.current;
