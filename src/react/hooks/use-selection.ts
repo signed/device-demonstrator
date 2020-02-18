@@ -54,14 +54,14 @@ export const useSelection = (): [Selection, SelectionUpdater, React.MutableRefOb
         if (textInput === null) {
             return;
         }
-        const writeCaretPositionToState = () => {
+        const writeSelectionToState = () => {
             setSelection(updateIfNeeded(extractSelectionFrom(textInput)));
         };
-        textInput.addEventListener('keyup', writeCaretPositionToState);
-        textInput.addEventListener('click', writeCaretPositionToState);
+        textInput.addEventListener('keyup', writeSelectionToState);
+        textInput.addEventListener('click', writeSelectionToState);
         return () => {
-            textInput.removeEventListener('keyup', writeCaretPositionToState);
-            textInput.removeEventListener('click', writeCaretPositionToState);
+            textInput.removeEventListener('keyup', writeSelectionToState);
+            textInput.removeEventListener('click', writeSelectionToState);
         };
     }, [textInput]);
 
