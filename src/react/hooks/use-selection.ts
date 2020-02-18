@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useCallbackRef } from 'use-callback-ref';
 
 type SelectionUpdater = (selectionUpdater: (currentSelection: Selection) => Selection) => void;
@@ -66,11 +66,16 @@ export const useSelection = (): [Selection, SelectionUpdater, React.MutableRefOb
         };
     }, [textInput]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (textInput === null) {
             return;
         }
-        textInput.setSelectionRange(selection.start, selection.end, selection.direction);
+        const needsSync = textInput.selectionStart !== selection.start
+            || textInput.selectionEnd !== selection.end
+            || textInput.selectionDirection !== selection.direction;
+        if (needsSync) {
+            textInput.setSelectionRange(selection.start, selection.end, selection.direction);
+        }
     }, [textInput, selection]);
 
     return [selection, setSelection, textInputRef];
