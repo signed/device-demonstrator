@@ -1,5 +1,4 @@
-import { Formatter } from 'input/formatting/shared';
-import { AsYouType, CountryCode as LibCountryCode } from 'libphonenumber-js/min';
+import { Formatter, log, phoneNumberFormatter, toUpperCaseFormatter } from 'input/formatting/shared';
 import React, { ChangeEvent, CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { select, toSelectionDirection, useSelection } from 'react/hooks/use-selection';
 
@@ -51,22 +50,7 @@ const inputFormattedWith = <Props extends FormattedInputProps = FormattedInputPr
     </div>;
 };
 
-const log: (formatter: Formatter) => Formatter = (toLog) => {
-    return (previous, toFormat) => {
-        const result = toLog(previous, toFormat);
-        console.log('previous', previous.selection, previous.value);
-        console.log('toFormat', toFormat.selection, toFormat.value);
-        console.log('result  ', result.selection, result.value);
-        return result;
-    };
-};
-
-const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(log((previous, toFormat) => {
-    return {
-        selection: toFormat.selection,
-        value: toFormat.value.toUpperCase()
-    };
-}), () => {
+const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(log(toUpperCaseFormatter), () => {
 });
 
 type CountryCode = string;
@@ -93,19 +77,7 @@ interface PhoneNumberDigitsProps extends FormattedInputProps {
     countryCode: string;
 }
 
-const PhoneNumberDigits: React.FC<PhoneNumberDigitsProps> = inputFormattedWith<PhoneNumberDigitsProps, string>((previous, toFormat) => {
-    const asYouType = new AsYouType(toFormat.context as LibCountryCode);
-    const formatted = asYouType.input(toFormat.value);
-    const caret = toFormat.selection.end === toFormat.value.length ? formatted.length : toFormat.selection.end;
-    return {
-        selection: {
-            start: caret,
-            end: caret,
-            direction: 'forward'
-        },
-        value: formatted
-    };
-}, (props) => props.countryCode);
+const PhoneNumberDigits: React.FC<PhoneNumberDigitsProps> = inputFormattedWith<PhoneNumberDigitsProps, string>(phoneNumberFormatter, (props: PhoneNumberDigitsProps) => props.countryCode);
 
 interface PhoneNumberInputProps {
 
