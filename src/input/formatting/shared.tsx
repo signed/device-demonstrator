@@ -47,7 +47,7 @@ export const phoneNumberFormatter = (previous: Formatted, toFormat: ToFormat<str
     };
 };
 
-type CountryCode = string;
+export type CountryCode = string;
 
 interface CountrySelectionProps {
     onChange: (country: CountryCode) => void;
@@ -56,7 +56,7 @@ interface CountrySelectionProps {
 
 export const CountrySelection: React.FC<CountrySelectionProps> = ({ value, onChange }) => {
     const callback = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
-        onChange(event.target.value);
+        onChange(event.target.value as CountryCode);
     }, [onChange]);
     return (
         <select onChange={callback} value={value}>

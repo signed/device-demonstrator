@@ -59,11 +59,7 @@ interface PhoneNumberDigitsProps extends FormattedInputProps {
 
 const PhoneNumberDigits: React.FC<PhoneNumberDigitsProps> = inputFormattedWith<PhoneNumberDigitsProps, string>(phoneNumberFormatter, (props: PhoneNumberDigitsProps) => props.countryCode);
 
-interface PhoneNumberInputProps {
-
-}
-
-const PhoneNumberInput: React.FC<PhoneNumberInputProps> = () => {
+const PhoneNumberInput: React.FC = () => {
     const [countryCode, setCountryCode] = useState('DE');
     const [formattedDigits, setFormattedDigits] = useState('');
 
@@ -85,7 +81,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = () => {
 };
 
 const onChange = (value: string) => console.log(value);
-export const inputWithCaretTrackingDemonstrator = () => () => {
+export const formattedInputOne = () => () => {
     const [enabled, setEnabled] = useState(true);
     return <ul>
         <li>
