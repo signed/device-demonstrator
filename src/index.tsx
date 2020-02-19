@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 //import { setupCameraDemonstrator } from './devices/camera/CameraDemonstrator';
-import { inputWithCaretTrackingDemonstrator } from './input/InputWithCaretTracking';
+import { inputWithCaretTrackingDemonstrator } from 'input/formatting/formatting-spike-one';
 import * as serviceWorker from './serviceWorker';
 
 const Demonstrator = inputWithCaretTrackingDemonstrator();
