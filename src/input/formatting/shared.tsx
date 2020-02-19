@@ -1,6 +1,7 @@
 import { AsYouType } from 'libphonenumber-js/max';
 import { CountryCode as LibCountryCode } from 'libphonenumber-js/types';
-import { Selection } from 'react/hooks/use-selection';
+import React, { ChangeEvent, useCallback } from 'react';
+import { select, Selection } from 'react/hooks/use-selection';
 
 export interface ToFormat<Context> {
     readonly selection: Selection;
@@ -44,4 +45,24 @@ export const phoneNumberFormatter = (previous: Formatted, toFormat: ToFormat<str
         },
         value: formatted
     };
+};
+
+type CountryCode = string;
+
+interface CountrySelectionProps {
+    onChange: (country: CountryCode) => void;
+    value: CountryCode;
+}
+
+export const CountrySelection: React.FC<CountrySelectionProps> = ({ value, onChange }) => {
+    const callback = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+        onChange(event.target.value);
+    }, [onChange]);
+    return (
+        <select onChange={callback} value={value}>
+            <option value='US'>United States of America</option>
+            <option value='FR'>France</option>
+            <option value='DE'>Deutschland</option>
+        </select>
+    );
 };

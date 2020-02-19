@@ -1,4 +1,4 @@
-import { Formatter, log, phoneNumberFormatter, toUpperCaseFormatter } from 'input/formatting/shared';
+import { CountrySelection, Formatter, log, phoneNumberFormatter, toUpperCaseFormatter } from 'input/formatting/shared';
 import React, { ChangeEvent, CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import { select, toSelectionDirection, useSelection } from 'react/hooks/use-selection';
 
@@ -52,26 +52,6 @@ const inputFormattedWith = <Props extends FormattedInputProps = FormattedInputPr
 
 const UppercaseCharacters: React.FC<FormattedInputProps> = inputFormattedWith(log(toUpperCaseFormatter), () => {
 });
-
-type CountryCode = string;
-
-interface CountrySelectionProps {
-    onChange: (country: CountryCode) => void;
-    value: CountryCode;
-}
-
-const CountrySelection: React.FC<CountrySelectionProps> = ({ value, onChange }) => {
-    const callback = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
-        onChange(event.target.value);
-    }, [onChange]);
-    return (
-        <select onChange={callback} value={value}>
-            <option value='US'>United States of America</option>
-            <option value='FR'>France</option>
-            <option value='DE'>Deutschland</option>
-        </select>
-    );
-};
 
 interface PhoneNumberDigitsProps extends FormattedInputProps {
     countryCode: string;
