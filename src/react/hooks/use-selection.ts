@@ -41,6 +41,18 @@ const extractSelectionFrom = (textInput: HTMLInputElement | null) => {
     return select(start, end, selectionDirection);
 };
 
+const syncSelectionWith = (textInput: HTMLInputElement | null, selection: Selection) => {
+    if (textInput === null) {
+        return;
+    }
+    const needsSync = textInput.selectionStart !== selection.start
+        || textInput.selectionEnd !== selection.end
+        || textInput.selectionDirection !== selection.direction;
+    if (needsSync) {
+        textInput.setSelectionRange(selection.start, selection.end, selection.direction);
+    }
+};
+
 export const useSelection = (): [Selection, SelectionUpdater, React.MutableRefObject<HTMLInputElement | null>] => {
     const [selection, setSelection] = useState<Selection>(select(0, 0, 'none'));
     const textInputRef = useCallbackRef<HTMLInputElement>(null, (newValue) => {
@@ -67,15 +79,7 @@ export const useSelection = (): [Selection, SelectionUpdater, React.MutableRefOb
     }, [textInput]);
 
     useLayoutEffect(() => {
-        if (textInput === null) {
-            return;
-        }
-        const needsSync = textInput.selectionStart !== selection.start
-            || textInput.selectionEnd !== selection.end
-            || textInput.selectionDirection !== selection.direction;
-        if (needsSync) {
-            textInput.setSelectionRange(selection.start, selection.end, selection.direction);
-        }
+        syncSelectionWith(textInput, selection);
     }, [textInput, selection]);
 
     return [selection, setSelection, textInputRef];
