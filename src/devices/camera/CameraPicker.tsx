@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
-import { VideoElement } from './VideoElement';
 import { Device, MediaStreamSubscription, RecordingDirector } from './RecordingDirector';
+import { VideoElement } from './VideoElement';
 
 export interface CameraPreviewProps {
     recordingDirector: RecordingDirector;
@@ -65,13 +65,29 @@ export interface CameraPickerProps {
 
 export interface CameraPickerState {
     showPreviews: boolean;
+    forceReRender: number;
 }
 
 export class CameraPicker extends React.Component<CameraPickerProps, CameraPickerState> {
 
     constructor(props: CameraPickerProps) {
         super(props);
-        this.state = { showPreviews: false };
+        this.state = { showPreviews: false, forceReRender: 0 };
+    }
+
+    componentDidMount() {
+        this.props.recordingDirector.addOnUpdateDevicesListener(this.availableDevicesChanged);
+    }
+
+
+    private availableDevicesChanged = () => {
+        this.setState((cur) => ({
+            forceReRender: cur.forceReRender + 1
+        }));
+    };
+
+    componentWillUnmount() {
+        this.props.recordingDirector.removeOnUpdateDevicesListener(this.availableDevicesChanged);
     }
 
     render() {

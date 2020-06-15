@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4';
 export type Device = Pick<MediaDeviceInfo, 'groupId' | 'deviceId' | 'kind' | 'label'>;
 
 export type OnCameraSelectionChangedListener = (newCamera: Device | void) => void;
+export type OnUpdateDevicesListener = () => void;
 
 interface SubscriptionDetails {
     readonly device: Device;
@@ -48,9 +49,9 @@ class SubscriptionLedger {
         let entry = this.subscriptionsByDevice.get(deviceId);
         if (entry === undefined) {
             entry = { stream: subscriptionDetails.stream, subscribers: new Set<string>() };
-            this.subscriptionsByDevice.set(deviceId, entry)
+            this.subscriptionsByDevice.set(deviceId, entry);
         }
-        entry.subscribers.add(subscriptionDetails.subscriberIdentifier)
+        entry.subscribers.add(subscriptionDetails.subscriberIdentifier);
     }
 
     removeSubscriber(subscriptionDetails: SubscriptionDetails, onNoMoreSubscribers: (stream: Promise<MediaStream>) => void = doNothing) {
@@ -75,6 +76,7 @@ class SubscriptionLedger {
 }
 
 export class RecordingDirector {
+    private readonly onUpdateDevicesListeners = new Set<OnUpdateDevicesListener>()
     private readonly subscriptionLedger = new SubscriptionLedger();
     private readonly devices: Array<Device> = [];
     private onCameraSelectionChangedListeners: Set<OnCameraSelectionChangedListener> = new Set<OnCameraSelectionChangedListener>();
@@ -83,6 +85,7 @@ export class RecordingDirector {
     updateDevices(newDevices: Array<Device>) {
         this.devices.splice(0, this.devices.length);
         this.devices.push(...newDevices);
+        this.onUpdateDevicesListeners.forEach(it => it());
     }
 
     cameras() {
@@ -108,7 +111,24 @@ export class RecordingDirector {
         if (maybeAlreadyAvailableStream !== undefined) {
             return maybeAlreadyAvailableStream;
         }
-        return this.videoStreamFor(device);
+        return this.videoStreamFor(device).then((stream) => {
+            // resolve the label of the device after the permission was given.
+            // we are in the then clause, so we can assume the permission was given.
+            if (device.label === '') {
+                 navigator.mediaDevices.enumerateDevices().then((devices) => {
+                     const devicesWithLabels = devices.map(it => ({
+                        kind: it.kind,
+                        label: it.label,
+                        deviceId: it.deviceId,
+                        groupId: it.groupId
+                    }));
+                     console.log(devicesWithLabels);
+                    this.updateDevices(devicesWithLabels);
+                });
+
+            }
+            return stream;
+        });
     }
 
     private videoStreamFor(device: Device): Promise<MediaStream> {
@@ -128,12 +148,20 @@ export class RecordingDirector {
         this.onCameraSelectionChangedListeners.forEach(listener => listener(this.selectedCamera));
     }
 
-    clearCameraSelection () {
+    clearCameraSelection() {
         const cameraSelected = this.selectedCamera !== undefined;
         if (cameraSelected) {
             this.selectedCamera = undefined;
             this.onCameraSelectionChangedListeners.forEach(listener => listener(this.selectedCamera));
         }
+    }
+
+    addOnUpdateDevicesListener(listener: OnUpdateDevicesListener){
+        this.onUpdateDevicesListeners.add(listener);
+    }
+
+    removeOnUpdateDevicesListener(listener: OnUpdateDevicesListener){
+        this.onUpdateDevicesListeners.delete(listener)
     }
 
     addOnCameraSelectionChanged(listener: OnCameraSelectionChangedListener) {
