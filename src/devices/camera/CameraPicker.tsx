@@ -32,24 +32,29 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
         const maybeSubscription = this.state.mediaStreamSubscription;
         if (maybeSubscription !== undefined) {
             maybeSubscription.cancel();
-            this.setState({stream:null, mediaStreamSubscription: undefined})
+            this.setState({ stream: null, mediaStreamSubscription: undefined });
         }
     }
 
     render() {
         const maybeStream = this.state.stream;
+        const device = this.props.device;
         return (
             <div>
-                <h4>{this.props.device.label}</h4>
-                {maybeStream !== null && <div>{maybeStream.id}</div>}
-                {this.state !== undefined && <VideoElement onClick={this.handleSelect} width={150} srcObject={maybeStream} autoPlay={true}/>}
+                <h4>{device.label}</h4>
+                <ul>
+                    <li>device id: {device.deviceId}</li>
+                    <li>group id: {device.groupId}</li>
+                    <li>stream id: {maybeStream?.id ?? 'no-stream'}</li>
+                </ul>
+                {<VideoElement onClick={this.handleSelect} width={150} srcObject={maybeStream} autoPlay={true}/>}
             </div>
         );
     }
 
     private handleSelect = () => {
-        this.props.recordingDirector.selectCamera(this.props.device)
-    }
+        this.props.recordingDirector.selectCamera(this.props.device);
+    };
 }
 
 export interface CameraPickerProps {
