@@ -28,15 +28,29 @@ export const fetchDevices = (recordingDirector: RecordingDirector) => {
     );
 };
 
+const logDeviceInformation = () => {
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+        console.log(`there are ${devices.length} devices`);
+        const devicesString = devices.map(device => `${device.kind} ${device.label} (${device.groupId}:${device.deviceId})`).join('\n');
+        console.log(devicesString);
+    }).catch((e) => console.log(e));
+};
 
 export const CameraDemonstrator: React.FC<CameraDemonstratorProps> = (props) => {
     const style: CSSProperties = {
         display: 'flex'
     };
+    const sidebarStyle: CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column'
+    }
     return (
         <>
             <div style={style}>
-                <CameraPicker recordingDirector={props.recordingDirector}/>
+                <div style={sidebarStyle}>
+                    <button onClick={logDeviceInformation}>log device information</button>
+                    <CameraPicker recordingDirector={props.recordingDirector}/>
+                </div>
                 <BigScreen recordingDirector={props.recordingDirector}/>
             </div>
             <Hide hide={true}>
@@ -54,5 +68,5 @@ export const setupCameraDemonstrator: () => React.FC = () => {
     navigator.mediaDevices.addEventListener('devicechange', updateDevices);
     return () => {
         return <CameraDemonstrator recordingDirector={recordingDirector}/>;
-    }
+    };
 };
