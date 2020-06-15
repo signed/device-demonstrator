@@ -5,6 +5,7 @@ import { Device, MediaStreamSubscription, RecordingDirector } from './RecordingD
 export interface CameraPreviewProps {
     recordingDirector: RecordingDirector;
     device: Device;
+    index: number;
 }
 
 export interface CameraPreviewState {
@@ -41,8 +42,9 @@ export class CameraPreview extends React.Component<CameraPreviewProps, CameraPre
         const device = this.props.device;
         return (
             <div>
-                <h4>{device.label}</h4>
+                <h4>Camera {this.props.index}</h4>
                 <ul>
+                    <li>device label: {device.label}</li>
                     <li>device id: {device.deviceId}</li>
                     <li>group id: {device.groupId}</li>
                     <li>stream id: {maybeStream?.id ?? 'no-stream'}</li>
@@ -74,7 +76,8 @@ export class CameraPicker extends React.Component<CameraPickerProps, CameraPicke
 
     render() {
         const button = this.state.showPreviews ? <button onClick={this.handleHidePreview}>Hide Previews</button> : <button onClick={this.handleShowPreview}>Show Previews</button>;
-        const previews = this.state.showPreviews ? this.props.recordingDirector.cameras().map(device => <CameraPreview key={device.deviceId} device={device} recordingDirector={this.props.recordingDirector}/>) : null;
+        const previews = this.state.showPreviews ? this.props.recordingDirector.cameras()
+            .map((device, index) => <CameraPreview key={device.deviceId} index={index} device={device} recordingDirector={this.props.recordingDirector}/>) : null;
         const style: CSSProperties = {
             display: 'flex',
             flexDirection: 'column'
