@@ -39,11 +39,15 @@ export class BigScreen extends React.Component<BigScreenProps, BigScreenState> {
         }
         return (
             <div>
-                {<VideoElement srcObject={this.state.stream} autoPlay={true}/>}
+                {<VideoElement srcObject={this.state.stream} autoPlay={true} onClick={this.handleVideoClicked}/>}
                 <div>{this.state.stream.id}</div>
             </div>
 
         );
+    }
+
+    private handleVideoClicked = () => {
+        this.props.recordingDirector.clearCameraSelection();
     }
 
     private handleDeviceSelectionChange = (device: Device | void): void => {

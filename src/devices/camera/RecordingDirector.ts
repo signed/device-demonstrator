@@ -128,6 +128,14 @@ export class RecordingDirector {
         this.onCameraSelectionChangedListeners.forEach(listener => listener(this.selectedCamera));
     }
 
+    clearCameraSelection () {
+        const cameraSelected = this.selectedCamera !== undefined;
+        if (cameraSelected) {
+            this.selectedCamera = undefined;
+            this.onCameraSelectionChangedListeners.forEach(listener => listener(this.selectedCamera));
+        }
+    }
+
     addOnCameraSelectionChanged(listener: OnCameraSelectionChangedListener) {
         this.onCameraSelectionChangedListeners.add(listener);
         listener(this.selectedCamera);
