@@ -5,6 +5,7 @@ import { Hide } from './Hide';
 import { Json } from './Json';
 import { Device, RecordingDirector } from './RecordingDirector';
 import { VideoView } from './VideoView';
+import { Context } from './DeviceDemonstratorContext';
 
 export interface CameraDemonstratorProps {
     recordingDirector: RecordingDirector;
@@ -53,7 +54,7 @@ export const CameraDemonstrator: React.FC<CameraDemonstratorProps> = (props) => 
                     <button onClick={() => setShowCameraPicker((cur) => !cur)}>toggle camera picker</button>
                     {showCameraPicker && <CameraPicker recordingDirector={props.recordingDirector}/>}
                 </div>
-                <BigScreen recordingDirector={props.recordingDirector}/>
+                <BigScreen/>
             </div>
             <Hide hide={true}>
                 <VideoView title={'one'}/>
@@ -69,6 +70,8 @@ export const setupCameraDemonstrator: () => React.FC = () => {
     updateDevices();
     navigator.mediaDevices.addEventListener('devicechange', updateDevices);
     return () => {
-        return <CameraDemonstrator recordingDirector={recordingDirector}/>;
+        return <Context.Provider value={{ recordingDirector }}>
+            <CameraDemonstrator recordingDirector={recordingDirector}/>
+        </Context.Provider>;
     };
 };

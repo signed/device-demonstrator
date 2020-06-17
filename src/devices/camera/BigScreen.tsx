@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Device, RecordingDirector } from './RecordingDirector';
+import { useRecordingDirector } from './DeviceDemonstratorContext';
+import { Device } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
-
-export interface BigScreenProps {
-    recordingDirector: RecordingDirector;
-}
 
 export interface BigScreenState {
     stream: MediaStream | null;
     streamError: boolean;
 }
 
-export const BigScreen: React.FC<BigScreenProps> = (props) => {
-    const { recordingDirector } = props;
-    const [device, setDevice] = useState<Device|void>(undefined)
+export const BigScreen: React.FC = () => {
+    const [device, setDevice] = useState<Device | void>(undefined);
     const [{ streamError, stream }, setState] = useState<BigScreenState>({ streamError: false, stream: null });
+    const recordingDirector = useRecordingDirector();
 
     useEffect(() => {
         const handleDeviceSelectionChange = (device: Device | void): void => {
-            setDevice(() => device)
+            setDevice(() => device);
         };
         recordingDirector.addOnCameraSelectionChanged(handleDeviceSelectionChange);
         return () => {
@@ -27,7 +24,7 @@ export const BigScreen: React.FC<BigScreenProps> = (props) => {
     }, [recordingDirector]);
 
     useEffect(() => {
-        if (undefined === device ) {
+        if (undefined === device) {
             return;
         }
         const mediaStreamSubscription = recordingDirector.videoStreamSubscriptionFor(device);
