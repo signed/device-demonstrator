@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { BigScreen } from './BigScreen';
 import { CameraPicker } from './CameraPicker';
 import { Hide } from './Hide';
@@ -37,19 +37,21 @@ const logDeviceInformation = () => {
 };
 
 export const CameraDemonstrator: React.FC<CameraDemonstratorProps> = (props) => {
+    const [showCameraPicker, setShowCameraPicker] = useState(true);
     const style: CSSProperties = {
         display: 'flex'
     };
     const sidebarStyle: CSSProperties = {
         display: 'flex',
         flexDirection: 'column'
-    }
+    };
     return (
         <>
             <div style={style}>
                 <div style={sidebarStyle}>
                     <button onClick={logDeviceInformation}>log device information</button>
-                    <CameraPicker recordingDirector={props.recordingDirector}/>
+                    <button onClick={() => setShowCameraPicker((cur) => !cur)}>toggle camera picker</button>
+                    {showCameraPicker && <CameraPicker recordingDirector={props.recordingDirector}/>}
                 </div>
                 <BigScreen recordingDirector={props.recordingDirector}/>
             </div>
