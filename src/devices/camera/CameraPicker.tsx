@@ -19,7 +19,6 @@ export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
 
     useEffect(() => {
         const mediaStreamSubscription = recordingDirector.videoStreamSubscriptionFor(device);
-        setState((prev) => ({ ...prev, mediaStreamSubscription }));
         mediaStreamSubscription.stream
             .then(stream => setState(prev => ({ ...prev, stream })))
             .catch(() => setState(prev => ({ ...prev, streamError: true })));
