@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
-import { Device, MediaStreamSubscription, RecordingDirector } from './RecordingDirector';
+import { Device, RecordingDirector } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
 
 export interface CameraPreviewProps {
@@ -9,55 +9,45 @@ export interface CameraPreviewProps {
 }
 
 export interface CameraPreviewState {
-    mediaStreamSubscription: MediaStreamSubscription | undefined
     stream: MediaStream | null;
     streamError: boolean;
 }
 
-export class CameraPreview extends React.Component<CameraPreviewProps, CameraPreviewState> {
+export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
+    const { recordingDirector, device, index } = props;
+    const [{ stream, streamError }, setState] = useState<CameraPreviewState>({ streamError: false, stream: null });
 
-    constructor(props: CameraPreviewProps) {
-        super(props);
-        this.state = { mediaStreamSubscription: undefined, streamError: false, stream: null };
-    }
-
-    componentDidMount(): void {
-        const mediaStreamSubscription = this.props.recordingDirector.videoStreamSubscriptionFor(this.props.device);
-        this.setState({ mediaStreamSubscription });
+    useEffect(() => {
+        const mediaStreamSubscription = recordingDirector.videoStreamSubscriptionFor(device);
+        setState((prev) => ({ ...prev, mediaStreamSubscription }));
         mediaStreamSubscription.stream
-            .then(stream => this.setState({ stream }))
-            .catch(() => this.setState({ streamError: true }));
-    }
+            .then(stream => setState(prev => ({ ...prev, stream })))
+            .catch(() => setState(prev => ({ ...prev, streamError: true })));
+        return () => {
+            mediaStreamSubscription.cancel();
+            setState(prev => ({ ...prev, stream: null, streamError: false }));
+        };
+    }, [recordingDirector, device]);
 
-    componentWillUnmount(): void {
-        const maybeSubscription = this.state.mediaStreamSubscription;
-        if (maybeSubscription !== undefined) {
-            maybeSubscription.cancel();
-            this.setState({ stream: null, mediaStreamSubscription: undefined });
-        }
-    }
-
-    render() {
-        const maybeStream = this.state.stream;
-        const device = this.props.device;
-        return (
-            <div>
-                <h4>Camera {this.props.index}</h4>
-                <ul>
-                    <li>device label: {device.label}</li>
-                    <li>device id: {device.deviceId}</li>
-                    <li>group id: {device.groupId}</li>
-                    <li>stream id: {maybeStream?.id ?? 'no-stream'}</li>
-                </ul>
-                {<VideoElement onClick={this.handleSelect} width={150} srcObject={maybeStream} autoPlay={true}/>}
-            </div>
-        );
-    }
-
-    private handleSelect = () => {
-        this.props.recordingDirector.selectCamera(this.props.device);
+    const handleSelect = () => {
+        recordingDirector.selectCamera(device);
     };
-}
+
+    const maybeStream = stream;
+    return (
+        <div>
+            <h4>Camera {index}</h4>
+            <ul>
+                <li>device label: {device.label}</li>
+                <li>device id: {device.deviceId}</li>
+                <li>group id: {device.groupId}</li>
+                <li>stream id: {maybeStream?.id ?? 'no-stream'}</li>
+            </ul>
+            {streamError && <div>error loading stream</div>}
+            {!streamError && <VideoElement onClick={handleSelect} width={150} srcObject={maybeStream} autoPlay={true}/>}
+        </div>
+    );
+};
 
 export interface CameraPickerProps {
     recordingDirector: RecordingDirector
