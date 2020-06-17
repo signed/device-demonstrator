@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { Device, MediaStreamSubscription, RecordingDirector } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
 
@@ -63,54 +63,37 @@ export interface CameraPickerProps {
     recordingDirector: RecordingDirector
 }
 
-export interface CameraPickerState {
-    showPreviews: boolean;
-    forceReRender: number;
-}
-
-export class CameraPicker extends React.Component<CameraPickerProps, CameraPickerState> {
-
-    constructor(props: CameraPickerProps) {
-        super(props);
-        this.state = { showPreviews: false, forceReRender: 0 };
-    }
-
-    componentDidMount() {
-        this.props.recordingDirector.addOnUpdateDevicesListener(this.availableDevicesChanged);
-    }
-
-
-    private availableDevicesChanged = () => {
-        this.setState((cur) => ({
-            forceReRender: cur.forceReRender + 1
-        }));
-    };
-
-    componentWillUnmount() {
-        this.props.recordingDirector.removeOnUpdateDevicesListener(this.availableDevicesChanged);
-    }
-
-    render() {
-        const button = this.state.showPreviews ? <button onClick={this.handleHidePreview}>Hide Previews</button> : <button onClick={this.handleShowPreview}>Show Previews</button>;
-        const previews = this.state.showPreviews ? this.props.recordingDirector.cameras()
-            .map((device, index) => <CameraPreview key={device.deviceId} index={index} device={device} recordingDirector={this.props.recordingDirector}/>) : null;
-        const style: CSSProperties = {
-            display: 'flex',
-            flexDirection: 'column'
+export const CameraPicker: React.FC<CameraPickerProps> = (props) => {
+    const { recordingDirector } = props;
+    const [{ showPreviews }, setState] = useState({ showPreviews: false, forceReRender: 0 });
+    useEffect(() => {
+        const availableDevicesChanged = () => {
+            setState((cur) => ({
+                ...cur,
+                forceReRender: cur.forceReRender + 1
+            }));
         };
-        return (
-            <div style={style}>
-                {button}
-                {previews}
-            </div>
-        );
-    }
+        recordingDirector.addOnUpdateDevicesListener(availableDevicesChanged);
+        return () => {
+            recordingDirector.removeOnUpdateDevicesListener(availableDevicesChanged);
+        };
+    }, [recordingDirector]);
 
-    private handleShowPreview = () => {
-        this.setState({ showPreviews: true });
-    };
+    const handleShowPreview = () => setState(cur => ({ ...cur, showPreviews: true }));
 
-    private handleHidePreview = () => {
-        this.setState({ showPreviews: false });
+    const handleHidePreview = () => setState(cur => ({ ...cur, showPreviews: false }));
+
+    const button = showPreviews ? <button onClick={handleHidePreview}>Hide Previews</button> : <button onClick={handleShowPreview}>Show Previews</button>;
+    const previews = showPreviews ? recordingDirector.cameras()
+        .map((device, index) => <CameraPreview key={device.deviceId} index={index} device={device} recordingDirector={recordingDirector}/>) : null;
+    const style: CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column'
     };
-}
+    return (
+        <div style={style}>
+            {button}
+            {previews}
+        </div>
+    );
+};
