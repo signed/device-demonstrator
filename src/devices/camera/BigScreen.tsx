@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useRecordingDirector } from './DeviceDemonstratorContext';
+import { useRecordingDirector, useVideoStreamFrom } from './DeviceDemonstratorContext';
 import { Device } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
 
-export interface BigScreenState {
-    stream: MediaStream | null;
-    streamError: boolean;
-}
-
 export const BigScreen: React.FC = () => {
     const [device, setDevice] = useState<Device | void>(undefined);
-    const [{ streamError, stream }, setState] = useState<BigScreenState>({ streamError: false, stream: null });
     const recordingDirector = useRecordingDirector();
 
     useEffect(() => {
@@ -22,20 +16,7 @@ export const BigScreen: React.FC = () => {
             recordingDirector.removeOnCameraSelectionChanged(handleDeviceSelectionChange);
         };
     }, [recordingDirector]);
-
-    useEffect(() => {
-        if (undefined === device) {
-            return;
-        }
-        const mediaStreamSubscription = recordingDirector.videoStreamSubscriptionFor(device);
-        mediaStreamSubscription.stream
-            .then(stream => setState(prev => ({ ...prev, stream })))
-            .catch(() => setState(prev => ({ ...prev, streamError: true })));
-        return () => {
-            mediaStreamSubscription.cancel();
-            setState(prev => ({ ...prev, stream: null, streamError: false }));
-        };
-    }, [recordingDirector, device]);
+    const { streamError, stream } = useVideoStreamFrom(device);
 
     if (device === undefined) {
         return <div>No device selected</div>;

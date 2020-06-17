@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
-import { useRecordingDirector } from './DeviceDemonstratorContext';
+import { useRecordingDirector, useVideoStreamFrom } from './DeviceDemonstratorContext';
 import { Device, RecordingDirector } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
 
@@ -16,24 +16,12 @@ export interface CameraPreviewState {
 
 export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
     const { recordingDirector, device, index } = props;
-    const [{ stream, streamError }, setState] = useState<CameraPreviewState>({ streamError: false, stream: null });
-
-    useEffect(() => {
-        const mediaStreamSubscription = recordingDirector.videoStreamSubscriptionFor(device);
-        mediaStreamSubscription.stream
-            .then(stream => setState(prev => ({ ...prev, stream })))
-            .catch(() => setState(prev => ({ ...prev, streamError: true })));
-        return () => {
-            mediaStreamSubscription.cancel();
-            setState(prev => ({ ...prev, stream: null, streamError: false }));
-        };
-    }, [recordingDirector, device]);
+    const { stream, streamError } = useVideoStreamFrom(device);
 
     const handleSelect = () => {
         recordingDirector.selectCamera(device);
     };
 
-    const maybeStream = stream;
     return (
         <div>
             <h4>Camera {index}</h4>
@@ -41,10 +29,10 @@ export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
                 <li>device label: {device.label}</li>
                 <li>device id: {device.deviceId}</li>
                 <li>group id: {device.groupId}</li>
-                <li>stream id: {maybeStream?.id ?? 'no-stream'}</li>
+                <li>stream id: {stream?.id ?? 'no-stream'}</li>
             </ul>
             {streamError && <div>error loading stream</div>}
-            {!streamError && <VideoElement onClick={handleSelect} width={150} srcObject={maybeStream} autoPlay={true}/>}
+            {!streamError && <VideoElement onClick={handleSelect} width={150} srcObject={stream} autoPlay={true}/>}
         </div>
     );
 };
