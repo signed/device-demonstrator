@@ -7,18 +7,18 @@ export interface BigScreenProps {
 }
 
 export interface BigScreenState {
-    device: Device | void;
     stream: MediaStream | null;
     streamError: boolean;
 }
 
 export const BigScreen: React.FC<BigScreenProps> = (props) => {
     const { recordingDirector } = props;
-    const [{ streamError, stream, device }, setState] = useState<BigScreenState>({ streamError: false, stream: null, device: undefined });
+    const [device, setDevice] = useState<Device|void>(undefined)
+    const [{ streamError, stream }, setState] = useState<BigScreenState>({ streamError: false, stream: null });
 
     useEffect(() => {
         const handleDeviceSelectionChange = (device: Device | void): void => {
-            setState(prev => ({...prev, device}))
+            setDevice(() => device)
         };
         recordingDirector.addOnCameraSelectionChanged(handleDeviceSelectionChange);
         return () => {
