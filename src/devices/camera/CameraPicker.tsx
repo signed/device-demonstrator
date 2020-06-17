@@ -1,4 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
+import { useRecordingDirector } from './DeviceDemonstratorContext';
 import { Device, RecordingDirector } from './RecordingDirector';
 import { VideoElement } from './VideoElement';
 
@@ -48,12 +49,8 @@ export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
     );
 };
 
-export interface CameraPickerProps {
-    recordingDirector: RecordingDirector
-}
-
-export const CameraPicker: React.FC<CameraPickerProps> = (props) => {
-    const { recordingDirector } = props;
+export const CameraPicker: React.FC = () => {
+    const recordingDirector = useRecordingDirector();
     const [{ showPreviews }, setState] = useState({ showPreviews: false, forceReRender: 0 });
     useEffect(() => {
         const availableDevicesChanged = () => {

@@ -7,10 +7,6 @@ import { Device, RecordingDirector } from './RecordingDirector';
 import { VideoView } from './VideoView';
 import { Context } from './DeviceDemonstratorContext';
 
-export interface CameraDemonstratorProps {
-    recordingDirector: RecordingDirector;
-}
-
 export const fetchDevices = (recordingDirector: RecordingDirector) => {
     navigator.mediaDevices.enumerateDevices()
         .then(function (mediaDeviceInfos) {
@@ -37,7 +33,7 @@ const logDeviceInformation = () => {
     }).catch((e) => console.log(e));
 };
 
-export const CameraDemonstrator: React.FC<CameraDemonstratorProps> = (props) => {
+export const CameraDemonstrator: React.FC = () => {
     const [showCameraPicker, setShowCameraPicker] = useState(true);
     const style: CSSProperties = {
         display: 'flex'
@@ -52,7 +48,7 @@ export const CameraDemonstrator: React.FC<CameraDemonstratorProps> = (props) => 
                 <div style={sidebarStyle}>
                     <button onClick={logDeviceInformation}>log device information</button>
                     <button onClick={() => setShowCameraPicker((cur) => !cur)}>toggle camera picker</button>
-                    {showCameraPicker && <CameraPicker recordingDirector={props.recordingDirector}/>}
+                    {showCameraPicker && <CameraPicker/>}
                 </div>
                 <BigScreen/>
             </div>
@@ -71,7 +67,7 @@ export const setupCameraDemonstrator: () => React.FC = () => {
     navigator.mediaDevices.addEventListener('devicechange', updateDevices);
     return () => {
         return <Context.Provider value={{ recordingDirector }}>
-            <CameraDemonstrator recordingDirector={recordingDirector}/>
+            <CameraDemonstrator/>
         </Context.Provider>;
     };
 };
