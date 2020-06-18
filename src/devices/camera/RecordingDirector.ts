@@ -7,7 +7,7 @@ export type OnUpdateDevicesListener = () => void;
 
 interface SubscriptionDetails {
     readonly device: Device;
-    readonly subscriberIdentifier: string;
+    readonly subscriptionIdentifier: SubscriptionIdentifier;
     stream: Promise<MediaStream>
 }
 
@@ -35,23 +35,25 @@ export class MediaStreamSubscription {
     }
 }
 
+type DeviceIdentifier = string;
+type SubscriptionIdentifier = string;
 
 interface SubscriptionLedgerEntry {
-    subscribers: Set<string>;
+    subscriptions: Set<SubscriptionIdentifier>;
     stream: Promise<MediaStream>;
 }
 
 class SubscriptionLedger {
-    private readonly subscriptionsByDevice: Map<string, SubscriptionLedgerEntry> = new Map();
+    private readonly subscriptionsByDevice = new Map<DeviceIdentifier, SubscriptionLedgerEntry>();
 
     addSubscriber(subscriptionDetails: SubscriptionDetails) {
         const deviceId = subscriptionDetails.device.deviceId;
         let entry = this.subscriptionsByDevice.get(deviceId);
         if (entry === undefined) {
-            entry = { stream: subscriptionDetails.stream, subscribers: new Set<string>() };
+            entry = { stream: subscriptionDetails.stream, subscriptions: new Set<SubscriptionIdentifier>() };
             this.subscriptionsByDevice.set(deviceId, entry);
         }
-        entry.subscribers.add(subscriptionDetails.subscriberIdentifier);
+        entry.subscriptions.add(subscriptionDetails.subscriptionIdentifier);
     }
 
     removeSubscriber(subscriptionDetails: SubscriptionDetails, onNoMoreSubscribers: (stream: Promise<MediaStream>) => void = doNothing) {
@@ -59,8 +61,8 @@ class SubscriptionLedger {
         if (entry === undefined) {
             return;
         }
-        entry.subscribers.delete(subscriptionDetails.subscriberIdentifier);
-        if (entry.subscribers.size === 0) {
+        entry.subscriptions.delete(subscriptionDetails.subscriptionIdentifier);
+        if (entry.subscriptions.size === 0) {
             this.subscriptionsByDevice.delete(subscriptionDetails.device.deviceId);
             onNoMoreSubscribers(entry.stream);
         }
@@ -96,7 +98,7 @@ export class RecordingDirector {
         let subscriptionDetails = {
             device,
             stream: this.streamForDevice(device),
-            subscriberIdentifier: uuid()
+            subscriptionIdentifier: uuid()
         };
         this.subscriptionLedger.addSubscriber(subscriptionDetails);
         return new MediaStreamSubscription(this, subscriptionDetails);
