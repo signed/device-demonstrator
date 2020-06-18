@@ -22,17 +22,23 @@ export interface MediaStreamSubscription {
 
 class DefaultMediaStreamSubscription implements MediaStreamSubscription {
     private canceled = false;
+    private _deviceRemoved = false;
 
     constructor(
         private readonly recordingDirector: RecordingDirector,
-        private readonly subscriptionDetails: SubscriptionDetails) {
+        public readonly subscriptionDetails: SubscriptionDetails) {
     }
 
     get stream() {
-        if (this.canceled) {
+        if (this.canceled || this._deviceRemoved) {
             return Promise.reject('subscription canceled');
         }
         return this.subscriptionDetails.stream;
+    }
+
+    deviceRemoved() {
+        console.log('jump this was registered');
+        this._deviceRemoved = true;
     }
 
     cancel() {
@@ -55,17 +61,25 @@ type DeviceIdentifier = string;
 type SubscriptionIdentifier = string;
 
 interface SubscriptionLedgerEntry {
-    subscriptions: Set<SubscriptionIdentifier>;
+    subscriptions: Map<SubscriptionIdentifier, DefaultMediaStreamSubscription>;
     stream: Promise<MediaStream>;
 }
 
 class SubscriptionLedger {
     private readonly subscriptionsByDevice = new Map<DeviceIdentifier, SubscriptionLedgerEntry>();
 
-    addSubscriber(subscriptionDetails: SubscriptionDetails) {
-        const newEntry = () => ({ stream: subscriptionDetails.stream, subscriptions: new Set<SubscriptionIdentifier>() });
-        const entry = getOrAdd(this.subscriptionsByDevice, subscriptionDetails.deviceIdentifier, newEntry);
-        entry.subscriptions.add(subscriptionDetails.subscriptionIdentifier);
+    addSubscriber(subscription: DefaultMediaStreamSubscription) {
+        const newEntry = () => ({ stream: subscription.stream, subscriptions: new Map<SubscriptionIdentifier, DefaultMediaStreamSubscription>() });
+        const details = subscription.subscriptionDetails;
+        const entry = getOrAdd(this.subscriptionsByDevice, details.deviceIdentifier, newEntry);
+        entry.subscriptions.set(details.subscriptionIdentifier, subscription);
+    }
+
+    subscriptionsTo(removedDeviceIds: string[]): DefaultMediaStreamSubscription[] {
+        return Array.from(this.subscriptionsByDevice.entries())
+            .filter(([d, _]) => removedDeviceIds.includes(d))
+            .map(([_, ledger]) => Array.from(ledger.subscriptions.values()))
+            .reduce((prev, cur) => prev.concat(cur), []);
     }
 
     removeSubscriber(subscriptionDetails: SubscriptionDetails, onNoMoreSubscribers: (stream: Promise<MediaStream>) => void = doNothing) {
@@ -97,9 +111,13 @@ export class RecordingDirector {
     private selectedCamera: Device | undefined;
 
     updateDevices(newDevices: Array<Device>) {
+        const availableDevicesId = newDevices.map(dev => dev.deviceId);
+        const removedDeviceIds = this.devices.filter(cur => !availableDevicesId.includes(cur.deviceId)).map(dev => dev.deviceId);
+
         this.devices.splice(0, this.devices.length);
         this.devices.push(...newDevices);
         this.onUpdateDevicesListeners.forEach(it => it());
+        this.subscriptionLedger.subscriptionsTo(removedDeviceIds).forEach(sub => sub.deviceRemoved());
     }
 
     cameras() {
@@ -108,13 +126,13 @@ export class RecordingDirector {
 
     videoStreamSubscriptionFor(device: Device): MediaStreamSubscription {
         let subscriptionDetails = {
-            device,
             deviceIdentifier: device.deviceId,
             stream: this.streamForDevice(device),
             subscriptionIdentifier: uuid()
         };
-        this.subscriptionLedger.addSubscriber(subscriptionDetails);
-        return new DefaultMediaStreamSubscription(this, subscriptionDetails);
+        const subscription = new DefaultMediaStreamSubscription(this, subscriptionDetails);
+        this.subscriptionLedger.addSubscriber(subscription);
+        return subscription;
     }
 
     cancelSubscription(subscriptionDetails: SubscriptionDetails): void {
