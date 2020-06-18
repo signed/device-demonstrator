@@ -41,14 +41,6 @@ class DefaultMediaStreamSubscription implements MediaStreamSubscription {
     }
 }
 
-type DeviceIdentifier = string;
-type SubscriptionIdentifier = string;
-
-interface SubscriptionLedgerEntry {
-    subscriptions: Set<SubscriptionIdentifier>;
-    stream: Promise<MediaStream>;
-}
-
 const getOrAdd = <Key, Value>(map: Map<Key, Value>, key: Key, creator: (key: Key) => Value): Value => {
     const maybeValue = map.get(key);
     if (maybeValue !== undefined) {
@@ -58,6 +50,14 @@ const getOrAdd = <Key, Value>(map: Map<Key, Value>, key: Key, creator: (key: Key
     map.set(key, value);
     return value;
 };
+
+type DeviceIdentifier = string;
+type SubscriptionIdentifier = string;
+
+interface SubscriptionLedgerEntry {
+    subscriptions: Set<SubscriptionIdentifier>;
+    stream: Promise<MediaStream>;
+}
 
 class SubscriptionLedger {
     private readonly subscriptionsByDevice = new Map<DeviceIdentifier, SubscriptionLedgerEntry>();
