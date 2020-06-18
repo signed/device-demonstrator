@@ -14,7 +14,13 @@ interface SubscriptionDetails {
 const doNothing = () => {
 };
 
-export class MediaStreamSubscription {
+export interface MediaStreamSubscription {
+    readonly stream: Promise<MediaStream>;
+
+    cancel(): void;
+}
+
+class DefaultMediaStreamSubscription implements MediaStreamSubscription {
     private canceled = false;
 
     constructor(
@@ -108,7 +114,7 @@ export class RecordingDirector {
             subscriptionIdentifier: uuid()
         };
         this.subscriptionLedger.addSubscriber(subscriptionDetails);
-        return new MediaStreamSubscription(this, subscriptionDetails);
+        return new DefaultMediaStreamSubscription(this, subscriptionDetails);
     }
 
     cancelSubscription(subscriptionDetails: SubscriptionDetails): void {
