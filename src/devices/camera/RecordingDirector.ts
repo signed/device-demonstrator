@@ -17,11 +17,15 @@ const doNothing = () => {
 export interface MediaStreamSubscription {
     readonly stream: Promise<MediaStream>;
 
+    onDeviceRemoved: (listener: () => void) => void
+
     cancel(): void;
 }
 
 class DefaultMediaStreamSubscription implements MediaStreamSubscription {
-    private canceled = false;
+    private _onDeviceRemoved = () => {
+    };
+    private _canceled = false;
     private _deviceRemoved = false;
 
     constructor(
@@ -30,20 +34,24 @@ class DefaultMediaStreamSubscription implements MediaStreamSubscription {
     }
 
     get stream() {
-        if (this.canceled || this._deviceRemoved) {
+        if (this._canceled || this._deviceRemoved) {
             return Promise.reject('subscription canceled');
         }
         return this.subscriptionDetails.stream;
     }
 
+    onDeviceRemoved(listener: () => void) {
+        this._onDeviceRemoved = listener;
+    }
+
     deviceRemoved() {
-        console.log('jump this was registered');
         this._deviceRemoved = true;
+        this._onDeviceRemoved();
     }
 
     cancel() {
         this.recordingDirector.cancelSubscription(this.subscriptionDetails);
-        this.canceled = true;
+        this._canceled = true;
     }
 }
 

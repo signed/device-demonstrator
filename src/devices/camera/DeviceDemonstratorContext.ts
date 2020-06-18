@@ -15,25 +15,31 @@ export const useRecordingDirector = (): RecordingDirector => {
     return maybe.recordingDirector;
 };
 
+export type StreamError = 'CouldNotOpen' | 'DeviceRemoved';
+
 export interface VideoStream {
     stream: MediaStream | null;
-    streamError: boolean;
+    streamError: StreamError | 'none';
 }
 
 export const useVideoStreamFrom = (device: Device | void): VideoStream => {
     const recordingDirector = useRecordingDirector();
-    const [state, setState] = useState<VideoStream>({ streamError: false, stream: null });
+    const [state, setState] = useState<VideoStream>({ stream: null, streamError: 'none' });
     useEffect(() => {
         if (undefined === device) {
             return;
         }
         const mediaStreamSubscription = recordingDirector.videoStreamSubscriptionFor(device);
+        mediaStreamSubscription.onDeviceRemoved(() => {
+            mediaStreamSubscription.cancel()
+            setState({ stream: null, streamError: 'DeviceRemoved' });
+        });
         mediaStreamSubscription.stream
-            .then(stream => setState(prev => ({ ...prev, stream })))
-            .catch(() => setState(prev => ({ ...prev, streamError: true })));
+            .then(stream => setState(() => ({ stream, streamError: 'none' })))
+            .catch(() => setState(() => ({ stream: null, streamError: 'CouldNotOpen' })));
         return () => {
             mediaStreamSubscription.cancel();
-            setState(prev => ({ ...prev, stream: null, streamError: false }));
+            setState(() => ({ stream: null, streamError: 'none' }));
         };
     }, [recordingDirector, device]);
     return state;

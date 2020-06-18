@@ -16,10 +16,12 @@ export const BigScreen: React.FC = () => {
             recordingDirector.removeOnCameraSelectionChanged(handleDeviceSelectionChange);
         };
     }, [recordingDirector]);
-    const { streamError, stream } = useVideoStreamFrom(device);
-
+    const { stream, streamError } = useVideoStreamFrom(device);
     if (device === undefined) {
         return <div>No device selected</div>;
+    }
+    if (!(streamError === 'none')) {
+        return <div>{streamError}</div>;
     }
     if (stream === null) {
         return <div>Opening stream</div>;
@@ -29,11 +31,8 @@ export const BigScreen: React.FC = () => {
     };
     return (
         <div>
-            {!streamError && <>
-                <VideoElement srcObject={stream} autoPlay={true} onClick={handleVideoClicked}/>
-                <div>{stream.id}</div>
-            </>}
-            {streamError && <div>error loading stream</div>}
+            <VideoElement srcObject={stream} autoPlay={true} onClick={handleVideoClicked}/>
+            <div>{stream.id}</div>
         </div>
     );
 };

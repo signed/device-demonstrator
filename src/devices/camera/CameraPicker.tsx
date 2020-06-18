@@ -9,11 +9,6 @@ export interface CameraPreviewProps {
     index: number;
 }
 
-export interface CameraPreviewState {
-    stream: MediaStream | null;
-    streamError: boolean;
-}
-
 export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
     const { recordingDirector, device, index } = props;
     const { stream, streamError } = useVideoStreamFrom(device);
@@ -22,6 +17,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
         recordingDirector.selectCamera(device);
     };
 
+    const streamAvailable = streamError === 'none';
     return (
         <div>
             <h4>Camera {index}</h4>
@@ -31,8 +27,8 @@ export const CameraPreview: React.FC<CameraPreviewProps> = (props) => {
                 <li>group id: {device.groupId}</li>
                 <li>stream id: {stream?.id ?? 'no-stream'}</li>
             </ul>
-            {streamError && <div>error loading stream</div>}
-            {!streamError && <VideoElement onClick={handleSelect} width={150} srcObject={stream} autoPlay={true}/>}
+            {!streamAvailable && <div>{streamError}</div>}
+            {streamAvailable && <VideoElement onClick={handleSelect} width={150} srcObject={stream} autoPlay={true}/>}
         </div>
     );
 };
