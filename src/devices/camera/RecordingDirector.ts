@@ -6,7 +6,7 @@ export type OnCameraSelectionChangedListener = (newCamera: Device | void) => voi
 export type OnUpdateDevicesListener = () => void;
 
 interface SubscriptionDetails {
-    readonly device: Device;
+    readonly deviceIdentifier: DeviceIdentifier
     readonly subscriptionIdentifier: SubscriptionIdentifier;
     stream: Promise<MediaStream>
 }
@@ -43,27 +43,33 @@ interface SubscriptionLedgerEntry {
     stream: Promise<MediaStream>;
 }
 
+const getOrAdd = <Key, Value>(map: Map<Key, Value>, key: Key, creator: (key: Key) => Value): Value => {
+    const maybeValue = map.get(key);
+    if (maybeValue !== undefined) {
+        return maybeValue;
+    }
+    const value = creator(key);
+    map.set(key, value);
+    return value;
+};
+
 class SubscriptionLedger {
     private readonly subscriptionsByDevice = new Map<DeviceIdentifier, SubscriptionLedgerEntry>();
 
     addSubscriber(subscriptionDetails: SubscriptionDetails) {
-        const deviceId = subscriptionDetails.device.deviceId;
-        let entry = this.subscriptionsByDevice.get(deviceId);
-        if (entry === undefined) {
-            entry = { stream: subscriptionDetails.stream, subscriptions: new Set<SubscriptionIdentifier>() };
-            this.subscriptionsByDevice.set(deviceId, entry);
-        }
+        const newEntry = () => ({ stream: subscriptionDetails.stream, subscriptions: new Set<SubscriptionIdentifier>() });
+        const entry = getOrAdd(this.subscriptionsByDevice, subscriptionDetails.deviceIdentifier, newEntry);
         entry.subscriptions.add(subscriptionDetails.subscriptionIdentifier);
     }
 
     removeSubscriber(subscriptionDetails: SubscriptionDetails, onNoMoreSubscribers: (stream: Promise<MediaStream>) => void = doNothing) {
-        const entry = this.subscriptionsByDevice.get(subscriptionDetails.device.deviceId);
+        const entry = this.subscriptionsByDevice.get(subscriptionDetails.deviceIdentifier);
         if (entry === undefined) {
             return;
         }
         entry.subscriptions.delete(subscriptionDetails.subscriptionIdentifier);
         if (entry.subscriptions.size === 0) {
-            this.subscriptionsByDevice.delete(subscriptionDetails.device.deviceId);
+            this.subscriptionsByDevice.delete(subscriptionDetails.deviceIdentifier);
             onNoMoreSubscribers(entry.stream);
         }
     }
@@ -78,7 +84,7 @@ class SubscriptionLedger {
 }
 
 export class RecordingDirector {
-    private readonly onUpdateDevicesListeners = new Set<OnUpdateDevicesListener>()
+    private readonly onUpdateDevicesListeners = new Set<OnUpdateDevicesListener>();
     private readonly subscriptionLedger = new SubscriptionLedger();
     private readonly devices: Array<Device> = [];
     private onCameraSelectionChangedListeners: Set<OnCameraSelectionChangedListener> = new Set<OnCameraSelectionChangedListener>();
@@ -97,6 +103,7 @@ export class RecordingDirector {
     videoStreamSubscriptionFor(device: Device): MediaStreamSubscription {
         let subscriptionDetails = {
             device,
+            deviceIdentifier: device.deviceId,
             stream: this.streamForDevice(device),
             subscriptionIdentifier: uuid()
         };
@@ -117,14 +124,14 @@ export class RecordingDirector {
             // resolve the label of the device after the permission was given.
             // we are in the then clause, so we can assume the permission was given.
             if (device.label === '') {
-                 navigator.mediaDevices.enumerateDevices().then((devices) => {
-                     const devicesWithLabels = devices.map(it => ({
+                navigator.mediaDevices.enumerateDevices().then((devices) => {
+                    const devicesWithLabels = devices.map(it => ({
                         kind: it.kind,
                         label: it.label,
                         deviceId: it.deviceId,
                         groupId: it.groupId
                     }));
-                     console.log(devicesWithLabels);
+                    console.log(devicesWithLabels);
                     this.updateDevices(devicesWithLabels);
                 });
 
@@ -158,12 +165,12 @@ export class RecordingDirector {
         }
     }
 
-    addOnUpdateDevicesListener(listener: OnUpdateDevicesListener){
+    addOnUpdateDevicesListener(listener: OnUpdateDevicesListener) {
         this.onUpdateDevicesListeners.add(listener);
     }
 
-    removeOnUpdateDevicesListener(listener: OnUpdateDevicesListener){
-        this.onUpdateDevicesListeners.delete(listener)
+    removeOnUpdateDevicesListener(listener: OnUpdateDevicesListener) {
+        this.onUpdateDevicesListeners.delete(listener);
     }
 
     addOnCameraSelectionChanged(listener: OnCameraSelectionChangedListener) {
