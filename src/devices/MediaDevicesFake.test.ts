@@ -12,22 +12,37 @@ const camera: MediaDeviceDescription = {
 };
 
 describe('attach device', () => {
-    describe('inform listeners', () => {
-        test('ondevicechange property', () => {
-            const listener = jest.fn();
-            const fake = new MediaDevicesFake();
-            fake.ondevicechange = listener;
-            fake.attach(camera);
-            expect(listener).toHaveBeenCalled();
-        });
+    let fake: MediaDevicesFake;
+    beforeEach(() => {
+        fake = new MediaDevicesFake();
+    });
 
-        test('device change listener ', () => {
-            const listener = jest.fn();
-            const fake = new MediaDevicesFake();
-            fake.addEventListener('devicechange', listener)
-            fake.attach(camera);
-            expect(listener).toHaveBeenCalled();
-        });
+    describe('attach', () => {
+        test('inform the listeners', () => {
+            const ondevicechange = jest.fn();
+            const eventListener = jest.fn();
 
+            fake.ondevicechange = ondevicechange;
+            fake.addEventListener('devicechange', eventListener);
+            fake.attach(camera);
+            expect(ondevicechange).toHaveBeenCalled();
+            expect(eventListener).toHaveBeenCalled();
+        });
+    });
+
+    describe('remove', () => {
+        test('inform the listeners', () => {
+            const ondevicechange = jest.fn();
+            const eventListener = jest.fn();
+
+            fake.attach(camera);
+            fake.ondevicechange = ondevicechange;
+            fake.addEventListener('devicechange', eventListener);
+
+            fake.remove(camera);
+
+            expect(ondevicechange).toHaveBeenCalled();
+            expect(eventListener).toHaveBeenCalled();
+        });
     });
 });

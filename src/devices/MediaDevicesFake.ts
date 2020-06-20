@@ -86,14 +86,18 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     public attach(_device: MediaDeviceDescription) {
+        this.informDeviceChangeListener();
+    }
+
+    public remove(_device: MediaDeviceDescription) {
+        this.informDeviceChangeListener()
+    }
+
+    private informDeviceChangeListener() {
         const event = new Event('stand-in');
         if (this._onDeviceChangeListener) {
             this._onDeviceChangeListener(event);
         }
-        this.deviceChangeListeners.forEach(listener => listener.call(this, event))
-    }
-
-    public remove(_device: MediaDeviceDescription) {
-
+        this.deviceChangeListeners.forEach(listener => listener.call(this, event));
     }
 }
