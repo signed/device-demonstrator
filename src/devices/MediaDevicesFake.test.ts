@@ -7,7 +7,7 @@ import { MediaDevicesFake } from './MediaDevicesFake';
 const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceDescription => {
     return {
         deviceId: 'camera-device-id',
-        groupId: 'camera-group-it',
+        groupId: 'camera-group-id',
         kind: 'videoinput',
         label: 'Acme camera (HD)',
         ...override
