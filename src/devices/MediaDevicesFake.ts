@@ -8,11 +8,7 @@ export interface MediaDeviceDescription {
     label: string
 }
 
-export interface MediaDeviceInfoFake extends MediaDeviceInfo {
-
-}
-
-export class MediaDeviceInfoDefaultFake implements MediaDeviceInfoFake {
+export class MediaDeviceInfoFake implements MediaDeviceInfo {
     constructor(
         private readonly mediaDeviceDescription: MediaDeviceDescription
     ) {
@@ -41,9 +37,11 @@ export class MediaDeviceInfoDefaultFake implements MediaDeviceInfoFake {
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
+const deviceMatching = (description: MediaDeviceDescription) => (device:MediaDeviceInfoFake) => device.deviceId === description.deviceId && device.groupId === description.groupId;
+
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
-    private readonly devices: MediaDeviceInfoDefaultFake [] = [];
+    private readonly devices: MediaDeviceInfoFake [] = [];
     private _onDeviceChangeListener: DeviceChangeListener | null = null;
 
     get ondevicechange(): DeviceChangeListener | null {
@@ -90,15 +88,23 @@ export class MediaDevicesFake implements MediaDevices {
         throw new Error('not implemented');
     }
 
-    public attach(mediaDeviceDescription: MediaDeviceDescription) {
+    public attach(toAdd: MediaDeviceDescription) {
+        if(this.devices.some(deviceMatching(toAdd))){
+            throw new Error(`device with this description already attached
+${JSON.stringify(toAdd, null, 2)}`);
+        }
         // make a defensive copy to stop manipulation after attaching the device
-        const infoDefaultFake = new MediaDeviceInfoDefaultFake({ ...mediaDeviceDescription });
+        const infoDefaultFake = new MediaDeviceInfoFake({ ...toAdd });
         this.devices.push(infoDefaultFake);
         this.informDeviceChangeListener();
     }
 
-    public remove(_device: MediaDeviceDescription) {
-        this.informDeviceChangeListener();
+    public remove(toRemove: MediaDeviceDescription) {
+        const index = this.devices.findIndex(deviceMatching(toRemove))
+        if (index >=0) {
+            this.devices.splice(index, 1);
+            this.informDeviceChangeListener();
+        }
     }
 
     private informDeviceChangeListener() {

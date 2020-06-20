@@ -30,22 +30,28 @@ describe('attach device', () => {
             expect(ondevicechange).toHaveBeenCalled();
             expect(eventListener).toHaveBeenCalled();
         });
-        test('enumerate devices lists attached devices', () => {
+        test('enumerate devices lists attached device', () => {
             const device = anyDevice({
                 kind: 'audioinput',
                 label: 'device label',
                 groupId: 'the group id',
-                deviceId: 'the device id',
+                deviceId: 'the device id'
             });
             fake.attach(device);
             return fake.enumerateDevices().then((devices) => {
                 expect(devices).toHaveLength(1);
                 const deviceInfo = devices[0];
-                expect(deviceInfo.kind).toBe('audioinput')
-                expect(deviceInfo.label).toBe('device label')
-                expect(deviceInfo.groupId).toBe('the group id')
-                expect(deviceInfo.deviceId).toBe('the device id')
+                expect(deviceInfo.kind).toBe('audioinput');
+                expect(deviceInfo.label).toBe('device label');
+                expect(deviceInfo.groupId).toBe('the group id');
+                expect(deviceInfo.deviceId).toBe('the device id');
             });
+        });
+        test('rejects adding two devices with the same groupId:deviceId', () => {
+            const one = anyDevice({groupId:'group id', deviceId: 'device id'});
+            const two = anyDevice({groupId:'group id', deviceId: 'device id'});
+            fake.attach(one)
+            expect(() => fake.attach(two)).toThrow();
         });
     });
 
@@ -63,6 +69,13 @@ describe('attach device', () => {
 
             expect(ondevicechange).toHaveBeenCalled();
             expect(eventListener).toHaveBeenCalled();
+        });
+        test('enumerate devices no longer lists the device', () => {
+            const device = anyDevice();
+            fake.attach(device);
+            fake.remove(device);
+            return fake.enumerateDevices()
+                .then(devices => expect(devices).toHaveLength(0));
         });
     });
 });
