@@ -1,4 +1,5 @@
-import { MediaDeviceDescription, MediaDevicesFake } from './MediaDevicesFake';
+import { MediaDeviceDescription } from './MediaDeviceDescription';
+import { MediaDevicesFake } from './MediaDevicesFake';
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js

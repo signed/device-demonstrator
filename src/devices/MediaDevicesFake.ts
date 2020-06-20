@@ -1,39 +1,5 @@
-/**
- * Describes a media device that you an plug into the {@link MediaDevicesFake.attach}
- */
-export interface MediaDeviceDescription {
-    deviceId: string
-    groupId: string
-    kind: MediaDeviceKind
-    label: string
-}
-
-export class MediaDeviceInfoFake implements MediaDeviceInfo {
-    constructor(
-        private readonly mediaDeviceDescription: MediaDeviceDescription
-    ) {
-    }
-
-    get deviceId(): string {
-        return this.mediaDeviceDescription.deviceId;
-    }
-
-    get groupId(): string {
-        return this.mediaDeviceDescription.groupId;
-    }
-
-    get kind(): MediaDeviceKind {
-        return this.mediaDeviceDescription.kind;
-    }
-
-    get label(): string {
-        return this.mediaDeviceDescription.label;
-    }
-
-    toJSON(): any {
-        throw new Error('not implemented')
-    }
-}
+import { MediaDeviceDescription } from './MediaDeviceDescription';
+import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
