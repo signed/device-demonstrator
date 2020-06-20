@@ -31,6 +31,22 @@ export class MediaDevicesFake implements MediaDevices {
         this.deviceChangeListeners.push(listener);
     }
 
+    removeEventListener<K extends keyof MediaDevicesEventMap>(type: K, listener: (this: MediaDevices, ev: MediaDevicesEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
+    removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
+        if (options) {
+            throw new Error('not implemented');
+        }
+        if (type !== 'devicechange') {
+            throw new Error('not implemented');
+        }
+        const index = this.deviceChangeListeners.indexOf(listener);
+        if (index >= 0) {
+            this.deviceChangeListeners.splice(index, 1);
+        }
+    }
+
     dispatchEvent(event: Event): boolean {
         throw new Error('not implemented');
     }
@@ -44,13 +60,6 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     getUserMedia(constraints?: MediaStreamConstraints): Promise<MediaStream> {
-        throw new Error('not implemented');
-    }
-
-    removeEventListener<K extends keyof MediaDevicesEventMap>(type: K, listener: (this: MediaDevices, ev: MediaDevicesEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
-    removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
         throw new Error('not implemented');
     }
 

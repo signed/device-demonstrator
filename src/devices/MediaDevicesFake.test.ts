@@ -31,6 +31,20 @@ describe('attach device', () => {
             expect(ondevicechange).toHaveBeenCalled();
             expect(eventListener).toHaveBeenCalled();
         });
+        test('no longer inform removed listeners', () => {
+            const ondevicechange = jest.fn();
+            const eventListener = jest.fn();
+
+            fake.ondevicechange = ondevicechange;
+            fake.addEventListener('devicechange', eventListener);
+
+            fake.ondevicechange = null;
+            fake.removeEventListener('devicechange', eventListener)
+
+            fake.attach(anyDevice());
+            expect(ondevicechange).not.toHaveBeenCalled();
+            expect(eventListener).not.toHaveBeenCalled();
+        });
         test('enumerate devices lists attached device', () => {
             const device = anyDevice({
                 kind: 'audioinput',
