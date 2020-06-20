@@ -12,34 +12,39 @@ export interface MediaDeviceInfoFake extends MediaDeviceInfo {
 
 }
 
-export class MediaDeviceInfoFake implements MediaDeviceInfoFake {
+export class MediaDeviceInfoDefaultFake implements MediaDeviceInfoFake {
+    constructor(
+        private readonly mediaDeviceDescription: MediaDeviceDescription
+    ) {
+    }
+
     get deviceId(): string {
-        return '';
+        return this.mediaDeviceDescription.deviceId;
     }
 
     get groupId(): string {
-        return '';
+        return this.mediaDeviceDescription.groupId;
     }
 
     get kind(): MediaDeviceKind {
-        return 'audiooutput';
+        return this.mediaDeviceDescription.kind;
     }
 
     get label(): string {
-        return 'fake';
+        return this.mediaDeviceDescription.label;
     }
 
     toJSON(): any {
-
+        throw new Error('not implemented')
     }
-
 }
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
 export class MediaDevicesFake implements MediaDevices {
-    private _onDeviceChangeListener: DeviceChangeListener | null = null;
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
+    private readonly devices: MediaDeviceInfoDefaultFake [] = [];
+    private _onDeviceChangeListener: DeviceChangeListener | null = null;
 
     get ondevicechange(): DeviceChangeListener | null {
         return this._onDeviceChangeListener;
@@ -54,10 +59,10 @@ export class MediaDevicesFake implements MediaDevices {
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
         if (options) {
-            throw new Error('not implemented')
+            throw new Error('not implemented');
         }
         if (type !== 'devicechange') {
-            throw new Error('not implemented')
+            throw new Error('not implemented');
         }
         this.deviceChangeListeners.push(listener);
     }
@@ -67,7 +72,7 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     enumerateDevices(): Promise<MediaDeviceInfo[]> {
-        return Promise.resolve([]);
+        return Promise.resolve([...this.devices]);
     }
 
     getSupportedConstraints(): MediaTrackSupportedConstraints {
@@ -85,12 +90,15 @@ export class MediaDevicesFake implements MediaDevices {
         throw new Error('not implemented');
     }
 
-    public attach(_device: MediaDeviceDescription) {
+    public attach(mediaDeviceDescription: MediaDeviceDescription) {
+        // make a defensive copy to stop manipulation after attaching the device
+        const infoDefaultFake = new MediaDeviceInfoDefaultFake({ ...mediaDeviceDescription });
+        this.devices.push(infoDefaultFake);
         this.informDeviceChangeListener();
     }
 
     public remove(_device: MediaDeviceDescription) {
-        this.informDeviceChangeListener()
+        this.informDeviceChangeListener();
     }
 
     private informDeviceChangeListener() {
