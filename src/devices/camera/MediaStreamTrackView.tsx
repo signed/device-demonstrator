@@ -5,6 +5,7 @@ export type MediaStreamTrackViewProps = Pick<MediaStreamTrack, 'id' | 'enabled' 
 
 export const MediaStreamTrackView: React.FC<MediaStreamTrackViewProps> = (props) => {
     const { track } = props;
+    const capabilities = track.getCapabilities ? track.getCapabilities(): 'track.getCapabilities does not exist';
     return (
         <dl>
             <dt>id</dt>
@@ -21,7 +22,7 @@ export const MediaStreamTrackView: React.FC<MediaStreamTrackViewProps> = (props)
             <dd>{String(props.muted)}</dd>
             <dt>capabilities</dt>
             <dd>
-                <Json content={track.getCapabilities()}/>
+                <Json content={capabilities}/>
             </dd>
             <dt>constraints</dt>
             <dd>

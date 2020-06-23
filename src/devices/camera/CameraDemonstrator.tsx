@@ -1,11 +1,9 @@
 import React, { CSSProperties, useState } from 'react';
+import { TestRig } from '../test-rig/test-rig';
 import { BigScreen } from './BigScreen';
 import { CameraPicker } from './CameraPicker';
-import { Hide } from './Hide';
-import { Json } from './Json';
-import { Device, RecordingDirector } from './RecordingDirector';
-import { VideoView } from './VideoView';
 import { Context } from './DeviceDemonstratorContext';
+import { Device, RecordingDirector } from './RecordingDirector';
 
 export const fetchDevices = (recordingDirector: RecordingDirector) => {
     navigator.mediaDevices.enumerateDevices()
@@ -52,10 +50,6 @@ export const CameraDemonstrator: React.FC = () => {
                 </div>
                 <BigScreen/>
             </div>
-            <Hide hide={true}>
-                <VideoView title={'one'}/>
-                <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
-            </Hide>
         </>
     );
 };
@@ -68,6 +62,7 @@ export const setupCameraDemonstrator: () => React.FC = () => {
     return () => {
         return <Context.Provider value={{ recordingDirector }}>
             <CameraDemonstrator/>
+            <TestRig/>
         </Context.Provider>;
     };
 };

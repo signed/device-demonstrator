@@ -3,7 +3,7 @@ import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
-const deviceMatching = (description: MediaDeviceDescription) => (device:MediaDeviceInfoFake) => device.deviceId === description.deviceId && device.groupId === description.groupId;
+const deviceMatching = (description: MediaDeviceDescription) => (device: MediaDeviceInfoFake) => device.deviceId === description.deviceId && device.groupId === description.groupId;
 
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
@@ -56,15 +56,45 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     getSupportedConstraints(): MediaTrackSupportedConstraints {
-        throw new Error('not implemented');
+        return {};
     }
 
+    // https://w3c.github.io/mediacapture-main/#methods-5
     getUserMedia(constraints?: MediaStreamConstraints): Promise<MediaStream> {
-        throw new Error('not implemented');
+        if (constraints?.peerIdentity) {
+            throw new Error('peerIdentity constraint not implemented');
+        }
+        if (constraints?.audio) {
+            throw new Error('audio constraint not implemented');
+        }
+        const video = constraints?.video;
+        if (typeof video === 'boolean') {
+            throw new Error('video boolean parameter not implemented');
+        }
+        if (video === undefined) {
+            throw new Error('current implementation requires a video constraint')
+        }
+        const passedProperties = Object.getOwnPropertyNames(constraints);
+        const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
+        const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
+        if (unsupported.length) {
+            throw new Error(`constraint not implemented ${unsupported}`)
+        }
+        if(video.deviceId === undefined) {
+            throw new Error('current implementation requires a deviceId');
+        }
+        const device = this.devices.find((device) => device.deviceId === video.deviceId);
+        if(device === undefined){
+            return Promise.reject()
+        }
+
+        return Promise.reject();
+
+        //navigator.mediaDevices.getUserMedia({ video: { deviceId: 'bogus' } }).then( stream => console.log(stream)).catch(er => console.log(er));
     }
 
     public attach(toAdd: MediaDeviceDescription) {
-        if(this.devices.some(deviceMatching(toAdd))){
+        if (this.devices.some(deviceMatching(toAdd))) {
             throw new Error(`device with this description already attached
 ${JSON.stringify(toAdd, null, 2)}`);
         }
@@ -75,8 +105,8 @@ ${JSON.stringify(toAdd, null, 2)}`);
     }
 
     public remove(toRemove: MediaDeviceDescription) {
-        const index = this.devices.findIndex(deviceMatching(toRemove))
-        if (index >=0) {
+        const index = this.devices.findIndex(deviceMatching(toRemove));
+        if (index >= 0) {
             this.devices.splice(index, 1);
             this.informDeviceChangeListener();
         }
