@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRecordingDirector, useVideoStreamFrom } from './DeviceDemonstratorContext';
 import { Device } from './RecordingDirector';
-import { VideoElement } from './VideoElement';
+import { VideoElement } from '../VideoElement';
 
 export const BigScreen: React.FC = () => {
     const [device, setDevice] = useState<Device | void>(undefined);

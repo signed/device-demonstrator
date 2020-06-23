@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Hide } from '../camera/Hide';
-import { Json } from '../camera/Json';
-import { StreamView } from '../camera/StreamView';
+import { Json } from './Json';
+import { StreamView } from './StreamView';
 
 type MediaStreamCheck = {
     what: string;
