@@ -1,11 +1,17 @@
+import { MatcherFunction } from '@testing-library/dom/types/matches';
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
 import { MediaDeviceDescription } from '../MediaDeviceDescription';
 import { MediaDevicesFake } from '../MediaDevicesFake';
-import { CameraDemonstrator, fetchDevices, setupCameraDemonstrator } from './CameraDemonstrator';
+import { CameraDemonstrator, fetchDevices } from './CameraDemonstrator';
 import { Context } from './DeviceDemonstratorContext';
 import { RecordingDirector } from './RecordingDirector';
 
+const including: (text: string) => MatcherFunction = (text: string) => {
+    return (content: String, _element: HTMLElement) => {
+        return content.includes(text);
+    };
+};
 
 const mediaDevicesFake = () => {
     const backup = navigator.mediaDevices;
@@ -33,19 +39,8 @@ describe('hello devices', () => {
     });
 
     const camera: MediaDeviceDescription = {
-        deviceId: '1234', groupId: '5678', kind: 'videoinput', label: 'The Camera'
+        deviceId: '1234', groupId: '5678', kind: 'videoinput', label: 'The Camera Label'
     };
-
-
-    test('should ', () => {
-        act(() => {
-            const Demonstrator = setupCameraDemonstrator();
-            const { debug, getByText } = render(<Demonstrator/>);
-            mediaDevices.attach(camera);
-            fireEvent.click(getByText('Show Previews'));
-            console.log(debug());
-        });
-    });
 
     test('should exp', async () => {
         const recordingDirector = new RecordingDirector();
@@ -58,18 +53,16 @@ describe('hello devices', () => {
             </Context.Provider>;
         };
 
-        const { getByText, debug } = render(<UnderTest/>);
+        const { getByText, findByText } = render(<UnderTest/>);
 
         act(() => {
             mediaDevices.attach(camera);
-        })
+        });
 
         await act(async () => {
             fireEvent.click(getByText('Show Previews'));
-        })
+        });
 
-        console.log(debug());
-
+        expect(await findByText(including('The Camera Label'))).toBeInTheDocument();
     });
-
 });

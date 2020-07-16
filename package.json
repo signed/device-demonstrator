@@ -21,7 +21,7 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jest-environment-jsdom-sixteen",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
@@ -50,7 +50,8 @@
     "@testing-library/jest-dom": "5.11.1",
     "@testing-library/react": "10.4.7",
     "@types/uuidv4": "5.0.0",
-    "gh-pages": "3.1.0"
+    "gh-pages": "3.1.0",
+    "jest-environment-jsdom-sixteen": "1.0.3"
   },
   "homepage": "https://signed.github.io/device-demonstrator"
 }
