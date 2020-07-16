@@ -4,17 +4,17 @@
   "private": true,
   "dependencies": {
     "@storybook/addon-knobs": "5.3.19",
-    "@types/jest": "26.0.0",
-    "@types/node": "14.0.13",
-    "@types/react": "16.9.38",
+    "@types/jest": "26.0.4",
+    "@types/node": "14.0.23",
+    "@types/react": "16.9.43",
     "@types/react-dom": "16.9.8",
-    "libphonenumber-js": "1.7.53",
+    "libphonenumber-js": "1.7.55",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-scripts": "3.4.1",
-    "typescript": "3.9.5",
+    "typescript": "3.9.6",
     "use-callback-ref": "1.2.4",
-    "uuidv4": "6.1.0"
+    "uuidv4": "6.1.1"
   },
   "scripts": {
     "predeploy": "yarn build",
@@ -45,12 +45,12 @@
     "@storybook/addon-actions": "5.3.19",
     "@storybook/addon-links": "5.3.19",
     "@storybook/addons": "5.3.19",
-    "@storybook/preset-create-react-app": "3.1.1",
+    "@storybook/preset-create-react-app": "3.1.4",
     "@storybook/react": "5.3.19",
-    "@testing-library/jest-dom": "5.10.1",
-    "@testing-library/react": "10.3.0",
+    "@testing-library/jest-dom": "5.11.1",
+    "@testing-library/react": "10.4.7",
     "@types/uuidv4": "5.0.0",
-    "gh-pages": "3.0.0"
+    "gh-pages": "3.1.0"
   },
   "homepage": "https://signed.github.io/device-demonstrator"
 }
