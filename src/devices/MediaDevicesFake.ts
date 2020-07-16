@@ -74,7 +74,7 @@ export class MediaDevicesFake implements MediaDevices {
         if (video === undefined) {
             throw new Error('current implementation requires a video constraint')
         }
-        const passedProperties = Object.getOwnPropertyNames(constraints);
+        const passedProperties = Object.getOwnPropertyNames(video);
         const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
         const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
         if (unsupported.length) {
