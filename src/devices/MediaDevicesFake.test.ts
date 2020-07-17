@@ -93,4 +93,30 @@ describe('attach device', () => {
                 .then(devices => expect(devices).toHaveLength(0));
         });
     });
+
+    describe('getUserMedia', () => {
+        test('no constraints returns type error', () => {
+            const stream = fake.getUserMedia();
+            return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`))
+        });
+
+        test('should ', () => {
+            const stream = fake.getUserMedia({});
+            return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`))
+        });
+
+        test.skip('reject promise in case no videoinput device is attached', () => {
+            const stream = fake.getUserMedia({video: {
+                deviceId: 'no-videoinput-device'
+                }});
+            return expect(stream).rejects.toBeDefined()
+        });
+
+        test('return videoinput with matching device id', async () => {
+            fake.attach(anyDevice({ kind: 'videoinput', deviceId: 'attached' }));
+            const stream = await fake.getUserMedia({video: {deviceId: 'attached'}})
+            expect(stream).toBeDefined()
+            //expect(stream.getTracks()).toHaveLength(1)
+        });
+    });
 });

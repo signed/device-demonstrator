@@ -1,5 +1,6 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
+import { MediaStreamFake } from './MediaStreamFake';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
@@ -61,6 +62,9 @@ export class MediaDevicesFake implements MediaDevices {
 
     // https://w3c.github.io/mediacapture-main/#methods-5
     getUserMedia(constraints?: MediaStreamConstraints): Promise<MediaStream> {
+        if (constraints === undefined || Object.keys(constraints).length === 0 ) {
+            return Promise.reject(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
+        }
         if (constraints?.peerIdentity) {
             throw new Error('peerIdentity constraint not implemented');
         }
@@ -83,14 +87,15 @@ export class MediaDevicesFake implements MediaDevices {
         if(video.deviceId === undefined) {
             throw new Error('current implementation requires a deviceId');
         }
-        const device = this.devices.find((device) => device.deviceId === video.deviceId);
+        const requestedKind = 'videoinput';
+        const matchingKind = this.devices.filter(device => device.kind === requestedKind )
+        const device = matchingKind.find(device => device.deviceId === video.deviceId);
         if(device === undefined){
+            // todo fallback to any other video device
             return Promise.reject()
         }
-
-        return Promise.reject();
-
-        //navigator.mediaDevices.getUserMedia({ video: { deviceId: 'bogus' } }).then( stream => console.log(stream)).catch(er => console.log(er));
+        //todo permission management
+        return Promise.resolve(new MediaStreamFake());
     }
 
     public attach(toAdd: MediaDeviceDescription) {
