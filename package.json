@@ -12,9 +12,9 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-scripts": "3.4.1",
-    "typescript": "3.9.6",
+    "typescript": "3.9.7",
     "use-callback-ref": "1.2.4",
-    "uuidv4": "6.1.1"
+    "uuidv4": "6.2.0"
   },
   "scripts": {
     "predeploy": "yarn build",
