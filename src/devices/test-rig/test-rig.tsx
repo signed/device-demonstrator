@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Hide } from '../camera/Hide';
+import { ErrorView } from './ErrorView';
 import { Json } from './Json';
 import { StreamView } from './StreamView';
 import { scenarios } from './Scenarios';
@@ -9,17 +10,28 @@ interface Result {
     success: boolean;
 }
 
+type GetUserMediaResult = MediaStream | Error
+
+const reconstructPromiseFrom = (result: GetUserMediaResult): Promise<MediaStream> => {
+    if (result instanceof Error) {
+        return Promise.reject(result);
+    }
+    return Promise.resolve(result);
+};
+
 export const TestRig: React.FC<{}> = () => {
     const [selectedScenario, setSelectedScenario] = useState<string>();
     const [constraintsAsString, setConstraintsAsString] = useState('');
     const [parseError, setParseError] = useState<boolean>(false);
     const [constraints, setConstraints] = useState<MediaStreamConstraints>();
-    const [stream, setStream] = useState<MediaStream | null>(null);
+    const [getUserMediaResult, setGetUserMediaResult] = useState<GetUserMediaResult | null>(null);
     const [results, setResults] = useState<Result[]>([]);
 
     useEffect(() => {
         try {
-            setConstraints(JSON.parse(constraintsAsString));
+            console.log(constraintsAsString)
+            const parsedConstraints = (constraintsAsString === 'undefined') ? undefined : JSON.parse(constraintsAsString);
+            setConstraints(parsedConstraints);
             setParseError(false);
         } catch (e) {
             setParseError(true);
@@ -32,7 +44,9 @@ export const TestRig: React.FC<{}> = () => {
             setSelectedScenario(first);
             return;
         }
-        setConstraintsAsString(JSON.stringify(scenarios.get(selectedScenario)?.constraints, null, 2));
+        const scenarioConstrains = scenarios.get(selectedScenario)?.constraints;
+        const scenarioConstraintsAsString = scenarioConstrains === undefined ? 'undefined' : JSON.stringify(scenarioConstrains, null, 2);
+        setConstraintsAsString(scenarioConstraintsAsString);
     }, [selectedScenario]);
 
     useEffect(() => {
@@ -41,23 +55,23 @@ export const TestRig: React.FC<{}> = () => {
 
     const handleStart = () => {
         navigator.mediaDevices.getUserMedia(constraints)
-            .then((stream: MediaStream) => setStream(() => stream))
-            .catch((err: Error) => alert(err));
+            .then((stream: MediaStream) => setGetUserMediaResult(() => stream))
+            .catch((err: Error) => setGetUserMediaResult(() => err));
     };
 
     const handleDetach = () => {
-        setStream(null);
+        setGetUserMediaResult(null);
     };
 
-    const handleRunChecks = () => {
+    const handleRunChecks = async () => {
         const scenario = scenarios.get(selectedScenario ?? '');
-        if (scenario === undefined || stream === null) {
+        if (scenario === undefined || getUserMediaResult === null) {
             return;
         }
-        const results = scenario.expected.checks.map(check => {
+        const results = scenario.expected.checks.map(async check => {
             let success: boolean;
             try {
-                success = check.predicate(stream);
+                success = await check.predicate(reconstructPromiseFrom(getUserMediaResult));
             } catch (e) {
                 success = false;
             }
@@ -67,7 +81,8 @@ export const TestRig: React.FC<{}> = () => {
                 success
             });
         });
-        setResults(() => results);
+
+        setResults(await Promise.all(results));
     };
 
     const handleClearChecks = () => {
@@ -81,16 +96,19 @@ export const TestRig: React.FC<{}> = () => {
         </select>
         <textarea value={constraintsAsString} onChange={(e) => setConstraintsAsString(e.target.value)}/>
         <button onClick={handleStart}>start</button>
-        <button disabled={stream === null} onClick={handleRunChecks}>run checks</button>
+        <button disabled={getUserMediaResult === null} onClick={handleRunChecks}>run checks</button>
         <button onClick={handleClearChecks}>clear checks</button>
         <button onClick={handleDetach}>detach</button>
         <ul>
-            {results.map(result => {
+            {results.map((result, index) => {
                 const success = result.success ? '✅' : '❌';
-                return <li>{`${success}: ${result.what}`}</li>;
+                return <li key={index}>{`${success}: ${result.what}`}</li>;
             })}
         </ul>
-        <StreamView stream={stream}/>
+        {getUserMediaResult === null ? null :
+            getUserMediaResult instanceof MediaStream ?
+                <StreamView stream={getUserMediaResult}/> :
+                <ErrorView error={getUserMediaResult}/>}
         <Hide hide={true}>
             <Json content={navigator.mediaDevices.getSupportedConstraints()}/>
         </Hide>

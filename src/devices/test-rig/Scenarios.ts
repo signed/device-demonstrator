@@ -1,6 +1,24 @@
+type MediaStreamPredicate = (mediaStream: MediaStream) => boolean
+type ErrorPredicate = (error: Error) => boolean
+type MediaStreamPromisePredicate = (mediaStream: Promise<MediaStream>) => Promise<boolean>
+
+const mediaStream: (input: MediaStreamPredicate) => MediaStreamPromisePredicate = (input: MediaStreamPredicate) => {
+    return async (promise: Promise<MediaStream>) => input(await promise);
+};
+const error: (input: ErrorPredicate) => MediaStreamPromisePredicate = (input: ErrorPredicate) => {
+    return async (promise: Promise<MediaStream>) => {
+        try {
+            await promise;
+            return false;
+        } catch (e) {
+            return input(e);
+        }
+    };
+};
+
 type MediaStreamCheck = {
     what: string;
-    predicate: (stream: MediaStream) => boolean
+    predicate: MediaStreamPromisePredicate
 }
 
 interface Expected {
@@ -11,7 +29,7 @@ interface Expected {
 interface Scenario {
     summary: string;
     description: string;
-    constraints: MediaStreamConstraints,
+    constraints?: MediaStreamConstraints,
     expected: Expected
 }
 
@@ -24,11 +42,11 @@ const noDeviceWithDeviceId: Scenario = {
         checks: [
             {
                 what: 'stream is active',
-                predicate: (stream) => stream.active
+                predicate: mediaStream((stream) => stream.active)
             }
             , {
                 what: 'stream has an id',
-                predicate: (stream) => stream.id.length > 0
+                predicate: mediaStream((stream) => stream.id.length > 0)
             }
         ]
     }
@@ -44,12 +62,31 @@ const existingDevice: Scenario = {
     }
 };
 
+const passUndefined: Scenario = {
+    summary: 'undefined constraints',
+    description: 'pass undefined as constraints',
+    constraints: undefined,
+    expected: {
+        description: 'reject and communicate that at least one constrain has to be present',
+        checks: [
+            {
+                what: 'Type Error',
+                predicate: error((err) => err instanceof TypeError)
+            }, {
+                what: 'error message',
+                predicate: error((err) => err.message === `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`)
+            }
+        ]
+    }
+};
+
 const collectScenarios = () => {
     const result = new Map<string, Scenario>();
     result.set(noDeviceWithDeviceId.summary, noDeviceWithDeviceId);
     result.set(existingDevice.summary, existingDevice);
+    result.set(passUndefined.summary, passUndefined);
     return result;
-}
+};
 
-export const scenarios = collectScenarios()
+export const scenarios = collectScenarios();
 
