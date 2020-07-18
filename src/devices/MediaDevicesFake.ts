@@ -61,6 +61,7 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     // https://w3c.github.io/mediacapture-main/#methods-5
+    // https://blog.addpipe.com/common-getusermedia-errors/
     getUserMedia(constraints?: MediaStreamConstraints): Promise<MediaStream> {
         if (constraints === undefined || Object.keys(constraints).length === 0 ) {
             return Promise.reject(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));

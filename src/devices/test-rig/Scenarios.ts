@@ -1,6 +1,7 @@
-type MediaStreamPredicate = (mediaStream: MediaStream) => boolean
-type ErrorPredicate = (error: Error) => boolean
-type MediaStreamPromisePredicate = (mediaStream: Promise<MediaStream>) => Promise<boolean>
+export type MediaStreamCheckResult = { success: boolean, messages?: Array<string> }
+type MediaStreamPredicate = (mediaStream: MediaStream) => MediaStreamCheckResult
+type ErrorPredicate = (error: Error) => MediaStreamCheckResult
+type MediaStreamPromisePredicate = (mediaStream: Promise<MediaStream>) => Promise<MediaStreamCheckResult>
 
 const mediaStream: (input: MediaStreamPredicate) => MediaStreamPromisePredicate = (input: MediaStreamPredicate) => {
     return async (promise: Promise<MediaStream>) => input(await promise);
@@ -9,12 +10,13 @@ const error: (input: ErrorPredicate) => MediaStreamPromisePredicate = (input: Er
     return async (promise: Promise<MediaStream>) => {
         try {
             await promise;
-            return false;
+            return { success: false, messages: ['expected a rejected promise'] };
         } catch (e) {
             return input(e);
         }
     };
 };
+
 
 type MediaStreamCheck = {
     what: string;
@@ -42,11 +44,17 @@ const noDeviceWithDeviceId: Scenario = {
         checks: [
             {
                 what: 'stream is active',
-                predicate: mediaStream((stream) => stream.active)
+                predicate: mediaStream((stream) => {
+                    const success = stream.active;
+                    return { success };
+                })
             }
             , {
                 what: 'stream has an id',
-                predicate: mediaStream((stream) => stream.id.length > 0)
+                predicate: mediaStream((stream) => {
+                    const success = stream.id.length > 0;
+                    return { success };
+                })
             }
         ]
     }
@@ -70,11 +78,24 @@ const passUndefined: Scenario = {
         description: 'reject and communicate that at least one constrain has to be present',
         checks: [
             {
-                what: 'Type Error',
-                predicate: error((err) => err instanceof TypeError)
+                what: 'TypeError',
+                predicate: error((err) => {
+                    const success = err instanceof TypeError;
+                    const messages = [`got: ${err.toString()}`];
+                    return { success, messages };
+                })
             }, {
                 what: 'error message',
-                predicate: error((err) => err.message === `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`)
+                predicate: error((err) => {
+                    const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`;
+                    const success = err.message === expected;
+                    const messages = [
+                        `expected: ${expected}`,
+                        `got: '${err.message}'`
+                    ];
+
+                    return { success, messages };
+                })
             }
         ]
     }

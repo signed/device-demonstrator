@@ -3,11 +3,11 @@ import { Hide } from '../camera/Hide';
 import { ErrorView } from './ErrorView';
 import { Json } from './Json';
 import { StreamView } from './StreamView';
-import { scenarios } from './Scenarios';
+import { MediaStreamCheckResult, scenarios } from './Scenarios';
 
 interface Result {
     what: string;
-    success: boolean;
+    details: MediaStreamCheckResult;
 }
 
 type GetUserMediaResult = MediaStream | Error
@@ -29,7 +29,6 @@ export const TestRig: React.FC<{}> = () => {
 
     useEffect(() => {
         try {
-            console.log(constraintsAsString)
             const parsedConstraints = (constraintsAsString === 'undefined') ? undefined : JSON.parse(constraintsAsString);
             setConstraints(parsedConstraints);
             setParseError(false);
@@ -69,16 +68,17 @@ export const TestRig: React.FC<{}> = () => {
             return;
         }
         const results = scenario.expected.checks.map(async check => {
-            let success: boolean;
+            let result: MediaStreamCheckResult;
             try {
-                success = await check.predicate(reconstructPromiseFrom(getUserMediaResult));
+                result = await check.predicate(reconstructPromiseFrom(getUserMediaResult));
             } catch (e) {
-                success = false;
+                const messages = [`check threw exception ${e.toString()}`];
+                result = { success: false, messages };
             }
 
             return ({
                 what: check.what,
-                success
+                details: result
             });
         });
 
@@ -90,7 +90,7 @@ export const TestRig: React.FC<{}> = () => {
     };
 
     return <div>
-        <h1>Test Rig{parseError ? ' (parse error)' : ''}</h1>
+        <h1 key={'test-rig'}>Test Rig{parseError ? ' (parse error)' : ''}</h1>
         <select name="scenarios" onChange={(e) => setSelectedScenario(e.target.value)}>
             {Array.from(scenarios.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}
         </select>
@@ -99,10 +99,20 @@ export const TestRig: React.FC<{}> = () => {
         <button disabled={getUserMediaResult === null} onClick={handleRunChecks}>run checks</button>
         <button onClick={handleClearChecks}>clear checks</button>
         <button onClick={handleDetach}>detach</button>
-        <ul>
-            {results.map((result, index) => {
-                const success = result.success ? '✅' : '❌';
-                return <li key={index}>{`${success}: ${result.what}`}</li>;
+        <ul key={'results'}>
+            {results.map((result, checkIndex) => {
+                const success = result.details.success ? '✅' : '❌';
+                const messages = result.details.messages ?? [];
+
+                const showMessages = !result.details.success && messages.length !== 0;
+                const messagesView = showMessages ? <ul key={`message ${checkIndex}`}>
+                    {messages.map((message, messageIndex) => <li key={`message ${checkIndex} ${messageIndex}` }>{message}</li>)}
+                </ul>: null;
+
+                return <React.Fragment key={`doombuggy ${checkIndex}`}>
+                    <li key={`check result ${checkIndex}`}>{`${success}: ${result.what}`}</li>
+                    {messagesView}
+                </React.Fragment>;
             })}
         </ul>
         {getUserMediaResult === null ? null :
