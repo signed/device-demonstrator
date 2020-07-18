@@ -5,7 +5,7 @@ import { Json } from './Json';
 import { StreamView } from './StreamView';
 import { MediaStreamCheckResult, scenarios } from './Scenarios';
 
-interface Result {
+export interface Result {
     what: string;
     details: MediaStreamCheckResult;
 }

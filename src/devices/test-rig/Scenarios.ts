@@ -35,7 +35,7 @@ interface Scenario {
     expected: Expected
 }
 
-const noDeviceWithDeviceId: Scenario = {
+export const noDeviceWithDeviceId: Scenario = {
     summary: 'bogus device id',
     description: 'the constraint contains a deviceId that no device has',
     constraints: { audio: { deviceId: 'bogus' } },
@@ -60,7 +60,7 @@ const noDeviceWithDeviceId: Scenario = {
     }
 };
 
-const existingDevice: Scenario = {
+export const existingDevice: Scenario = {
     summary: 'existing device',
     description: 'the constraint contains a deviceId of an existing device',
     constraints: { video: { deviceId: '77df7c3d3f24890c51364752fb295895fbebdc821755f6706f5bcd06e6e63269' } },
@@ -70,7 +70,7 @@ const existingDevice: Scenario = {
     }
 };
 
-const passUndefined: Scenario = {
+export const passUndefined: Scenario = {
     summary: 'undefined constraints',
     description: 'pass undefined as constraints',
     constraints: undefined,
