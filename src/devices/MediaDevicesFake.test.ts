@@ -1,6 +1,6 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
-import { passUndefined } from './test-rig/Scenarios';
+import { passUndefined, Scenario } from './test-rig/Scenarios';
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -13,6 +13,25 @@ const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceD
         label: 'Acme camera (HD)',
         ...override
     };
+};
+
+const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
+    const stream = fake.getUserMedia(scenario.constraints);
+    const results = await Promise.all(scenario.expected.checks.map(async check => {
+        return {
+            what: check.what,
+            details: await check.predicate(stream)
+        };
+    }));
+
+    return results.filter(check => !check.details.success)
+        .map((failed) => {
+            const lines = [];
+            lines.push('check: ' + failed.what);
+            const messages = failed.details.messages ?? ['no message'];
+            messages.map(message => ` - ${message}`).forEach(line => lines.push(line));
+            return lines.join('\n');
+        }).join('\n');
 };
 
 describe('attach device', () => {
@@ -104,25 +123,7 @@ describe('attach device', () => {
             });
 
             test('scenario', async () => {
-                const scenario = passUndefined;
-
-                const stream = fake.getUserMedia(scenario.constraints);
-                const results = await Promise.all(scenario.expected.checks.map(async check => {
-                    return {
-                        what: check.what,
-                        details: await check.predicate(stream)
-                    };
-                }));
-
-                const report = results.filter(check => !check.details.success)
-                    .map((failed) => {
-                    const lines = []
-                    lines.push('check: ' + failed.what);
-                    const messages = failed.details.messages ?? ['no message'];
-                    messages.map(message => ` - ${message}`).forEach(line => lines.push(line));
-                    return lines.join('\n');
-                }).join('\n');
-                expect(report).toBe('');
+                expect(await runAndReport(fake, passUndefined)).toBe('');
             });
 
         });

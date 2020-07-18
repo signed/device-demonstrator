@@ -28,7 +28,7 @@ interface Expected {
     checks: MediaStreamCheck[]
 }
 
-interface Scenario {
+export interface Scenario {
     summary: string;
     description: string;
     constraints?: MediaStreamConstraints,
