@@ -7,7 +7,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
         throw new Error('not implemented');
     }
 
-    set enabled(value: boolean) {
+    set enabled(_value: boolean) {
         throw new Error('not implemented');
     }
 
@@ -85,10 +85,21 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
 }
 
 export class MediaStreamFake implements MediaStream {
+    constructor(private readonly mediaTracks: Array<MediaStreamTrackFake>) {
+    }
+
+    /**
+     * A Boolean value that returns true if the MediaStream is active, or false otherwise.
+     * A stream is considered active if at least one of its MediaStreamTracks is not in the MediaStreamTrack.ended state.
+     * Once every track has ended, the stream's active property becomes false.
+     */
     get active(): boolean {
         return false;
     }
 
+    /**
+     *  A {@DOMString} containing 36 characters denoting a universally unique identifier (UUID) for the object.
+     */
     get id(): string {
         return '';
     }
@@ -114,30 +125,62 @@ export class MediaStreamFake implements MediaStream {
         throw new Error('not implemented');
     }
 
+    /**
+     * Stores a copy of the MediaStreamTrack given as argument.
+     * If the track has already been added to the MediaStream object, nothing happens.
+     * @param track
+     */
     addTrack(track: MediaStreamTrack): void {
         throw new Error('not implemented');
     }
 
+    /**
+     * Returns a clone of the MediaStream object.
+     * The clone will, however, have a unique value for {@link MediaStreamFake.id id}.
+     */
     clone(): MediaStream {
         throw new Error('not implemented');
     }
 
-    getAudioTracks(): MediaStreamTrack[] {
+    /**
+     * Returns a list of the {@link MediaStreamTrackFake} objects stored in the {@link MediaStreamFake} object that have their kind attribute set to audio.
+     * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
+     */
+    getAudioTracks(): MediaStreamTrackFake[] {
         throw new Error('not implemented');
     }
 
-    getTrackById(trackId: string): MediaStreamTrack | null {
+    /**
+     * Returns the track whose ID corresponds to the one given in parameters, trackid.
+     * If no parameter is given, or if no track with that ID does exist, it returns null.
+     * If several tracks have the same ID, it returns the first one.
+     * @param trackId
+     */
+    getTrackById(trackId: string): MediaStreamTrackFake | null {
         throw new Error('not implemented');
     }
 
-    getTracks(): MediaStreamTrack[] {
+    /**
+     * Returns a list of all {@link MediaStreamTrackFake} objects stored in the MediaStream object, regardless of the value of the kind attribute.
+     * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
+     */
+    getTracks(): MediaStreamTrackFake[] {
+        return [...this.mediaTracks];
+    }
+
+    /**
+     * Returns a list of the {@link MediaStreamTrackFake} objects stored in the MediaStream object that have their kind attribute set to "video".
+     * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
+     */
+    getVideoTracks(): MediaStreamTrackFake[] {
         throw new Error('not implemented');
     }
 
-    getVideoTracks(): MediaStreamTrack[] {
-        throw new Error('not implemented');
-    }
-
+    /**
+     * Removes the {@link MediaStreamTrackFake} given as argument.
+     * If the track is not part of the MediaStream object, nothing happens.
+     * @param track
+     */
     removeTrack(track: MediaStreamTrack): void {
         throw new Error('not implemented');
     }

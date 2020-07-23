@@ -146,7 +146,7 @@ describe('attach device', () => {
             fake.attach(anyDevice({ kind: 'videoinput', deviceId: 'attached' }));
             const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } });
             expect(stream).toBeDefined();
-            //expect(stream.getTracks()).toHaveLength(1)
+            expect(stream.getTracks()).toHaveLength(1)
         });
     });
 });
