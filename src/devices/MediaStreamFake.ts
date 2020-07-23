@@ -84,9 +84,17 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
 
 }
 
-export class MediaStreamFake implements MediaStream {
-    constructor(private readonly mediaTracks: Array<MediaStreamTrackFake>) {
+const allowedCharacters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+export const mediaStreamId = () => {
+    let id = '';
+    for (; id.length < 36;) {
+        id += allowedCharacters[(Math.random() * 60) | 0];
     }
+    return id;
+};
+
+export class MediaStreamFake implements MediaStream {
+    constructor(private readonly _id: string, private readonly mediaTracks: Array<MediaStreamTrackFake>) {}
 
     /**
      * A Boolean value that returns true if the MediaStream is active, or false otherwise.
@@ -101,7 +109,7 @@ export class MediaStreamFake implements MediaStream {
      *  A {@DOMString} containing 36 characters denoting a universally unique identifier (UUID) for the object.
      */
     get id(): string {
-        return '';
+        return this._id;
     }
 
     public onaddtrack: MediaStreamEventListener | null = null;
