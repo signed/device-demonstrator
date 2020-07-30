@@ -1,18 +1,24 @@
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
 
-export class MediaStreamTrackFake implements MediaStreamTrack {
-    private _enabled = true;
-    private _readyState: MediaStreamTrackState = 'live';
+export interface MediaStreamTrackProperties {
+    readyState: MediaStreamTrack['readyState']
+    enabled: MediaStreamTrack['enabled']
+}
 
-    constructor(private readonly _id: string) {
+export const initialMediaStreamTrackProperties = (): MediaStreamTrackProperties => {
+    return { readyState: 'live', enabled: true };
+};
+
+export class MediaStreamTrackFake implements MediaStreamTrack {
+    constructor(private readonly _id: string, private readonly properties: MediaStreamTrackProperties) {
     }
 
     get enabled(): boolean {
-        return this._enabled;
+        return this.properties.enabled;
     }
 
     set enabled(value: boolean) {
-        this._enabled = value;
+        this.properties.enabled = value;
     }
 
     get id(): string {
@@ -36,7 +42,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     }
 
     get readyState(): MediaStreamTrackState {
-        return this._readyState;
+        return this.properties.readyState;
     };
 
     onended: MediaStreamTrackEventListener | null = null;
@@ -83,6 +89,6 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     }
 
     stop(): void {
-        this._readyState = 'ended'
+        this.properties.readyState = 'ended';
     }
 }

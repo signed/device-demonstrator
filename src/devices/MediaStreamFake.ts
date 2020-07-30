@@ -12,7 +12,11 @@ export const mediaStreamId = () => {
 };
 
 export class MediaStreamFake implements MediaStream {
-    constructor(private readonly _id: string, private readonly mediaTracks: Array<MediaStreamTrackFake>) {}
+    constructor(
+        private readonly _id: string,
+        private readonly mediaTracks: Array<MediaStreamTrackFake>
+    ) {
+    }
 
     /**
      * A Boolean value that returns true if the MediaStream is active, or false otherwise.
@@ -20,7 +24,7 @@ export class MediaStreamFake implements MediaStream {
      * Once every track has ended, the stream's active property becomes false.
      */
     get active(): boolean {
-        return false;
+        return !this.mediaTracks.every(track => track.readyState === 'ended');
     }
 
     /**

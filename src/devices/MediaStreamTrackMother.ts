@@ -1,6 +1,8 @@
 import { uuidV4 } from './MediaDevicesFake';
-import { MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake, MediaStreamTrackProperties } from './MediaStreamTrackFake';
 
-export const anyMediaStreamTrack = () => {
-    return new MediaStreamTrackFake(uuidV4())
-}
+export const anyMediaStreamTrack = (overrides: Partial<MediaStreamTrackProperties> = {}) => {
+    const initial = initialMediaStreamTrackProperties();
+    const properties = { ...initial, ...overrides };
+    return new MediaStreamTrackFake(uuidV4(), properties);
+};

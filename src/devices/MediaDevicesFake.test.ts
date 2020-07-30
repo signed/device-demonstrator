@@ -151,6 +151,7 @@ describe('attach device', () => {
             const track = stream.getTracks()[0];
             expect(track.id).toBeUuid()
             expect(track.enabled).toBe(true)
+            expect(track.readyState).toBe('live')
         });
     });
 });

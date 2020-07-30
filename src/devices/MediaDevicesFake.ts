@@ -1,7 +1,7 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
-import { MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
@@ -107,7 +107,7 @@ export class MediaDevicesFake implements MediaDevices {
             return Promise.reject()
         }
         //todo permission management
-        const mediaTrack = new MediaStreamTrackFake(uuidV4());
+        const mediaTrack = new MediaStreamTrackFake(uuidV4(), initialMediaStreamTrackProperties());
         const mediaTracks = [mediaTrack]
         return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
     }

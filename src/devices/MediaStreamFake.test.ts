@@ -3,17 +3,26 @@ import { anyMediaStreamTrack } from './MediaStreamTrackMother';
 
 describe('MediaStreamFake', () => {
     test('create a new one', () => {
-        expect(new MediaStreamFake(mediaStreamId(),[])).toBeDefined();
+        expect(new MediaStreamFake(mediaStreamId(), [])).toBeDefined();
     });
+
     test('do not leak internal state ', () => {
-        const fake = new MediaStreamFake(mediaStreamId(),[]);
-        fake.getTracks().push(anyMediaStreamTrack())
+        const fake = new MediaStreamFake(mediaStreamId(), []);
+        fake.getTracks().push(anyMediaStreamTrack());
         expect(fake.getTracks()).toHaveLength(0);
+    });
+
+    test('derive active state from contained tracks', () => {
+        const liveTrack = anyMediaStreamTrack({ readyState: 'live' });
+        const fake = new MediaStreamFake(mediaStreamId(), [liveTrack]);
+        expect(fake.active).toBe(true)
+        liveTrack.stop()
+        expect(fake.active).toBe(false)
     });
 });
 
 describe('mediaStreamId', () => {
     test('length of 36 characters', () => {
-        expect(mediaStreamId()).toHaveLength(36)
+        expect(mediaStreamId()).toHaveLength(36);
     });
 });
