@@ -1,6 +1,7 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { passUndefined, Scenario } from './test-rig/Scenarios';
+import '../to-be-uuid'
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -147,6 +148,9 @@ describe('attach device', () => {
             const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } });
             expect(stream).toBeDefined();
             expect(stream.getTracks()).toHaveLength(1)
+            const track = stream.getTracks()[0];
+            expect(track.id).toBeUuid()
+            expect(track.enabled).toBe(true)
         });
     });
 });

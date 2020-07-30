@@ -1,10 +1,21 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
-import { MediaStreamFake, mediaStreamId, MediaStreamTrackFake } from './MediaStreamFake';
+import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
+import { MediaStreamTrackFake } from './MediaStreamTrackFake';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
 const deviceMatching = (description: MediaDeviceDescription) => (device: MediaDeviceInfoFake) => device.deviceId === description.deviceId && device.groupId === description.groupId;
+
+export const uuidV4 = () => {
+    let dt = new Date().getTime();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+};
+
 
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
@@ -96,7 +107,7 @@ export class MediaDevicesFake implements MediaDevices {
             return Promise.reject()
         }
         //todo permission management
-        const mediaTrack = new MediaStreamTrackFake();
+        const mediaTrack = new MediaStreamTrackFake(uuidV4());
         const mediaTracks = [mediaTrack]
         return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
     }
