@@ -1,12 +1,12 @@
 import { uuidV4 } from './MediaDevicesFake';
-import { MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake';
 import '../to-be-uuid';
 
 describe('MediaStreamTrackFake', () => {
     let track: MediaStreamTrackFake;
 
     beforeEach(() => {
-        track = new MediaStreamTrackFake(uuidV4());
+        track = new MediaStreamTrackFake(initialMediaStreamTrackProperties());
     });
 
     test('enabled by default', () => {

@@ -1,16 +1,19 @@
+import { uuidV4 } from './MediaDevicesFake';
+
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
 
 export interface MediaStreamTrackProperties {
+    id: MediaStreamTrack['id']
     readyState: MediaStreamTrack['readyState']
     enabled: MediaStreamTrack['enabled']
 }
 
 export const initialMediaStreamTrackProperties = (): MediaStreamTrackProperties => {
-    return { readyState: 'live', enabled: true };
+    return { id: uuidV4(), readyState: 'live', enabled: true };
 };
 
 export class MediaStreamTrackFake implements MediaStreamTrack {
-    constructor(private readonly _id: string, private readonly properties: MediaStreamTrackProperties) {
+    constructor(private readonly properties: MediaStreamTrackProperties) {
     }
 
     get enabled(): boolean {
@@ -22,7 +25,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     }
 
     get id(): string {
-        return this._id;
+        return this.properties.id;
     }
 
     get isolated(): boolean {
