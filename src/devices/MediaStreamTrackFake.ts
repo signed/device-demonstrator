@@ -2,6 +2,7 @@ type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
 
 export class MediaStreamTrackFake implements MediaStreamTrack {
     private _enabled = true;
+    private _readyState: MediaStreamTrackState = 'live';
 
     constructor(private readonly _id: string) {
     }
@@ -15,7 +16,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     }
 
     get id(): string {
-        return this._id
+        return this._id;
     }
 
     get isolated(): boolean {
@@ -35,7 +36,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     }
 
     get readyState(): MediaStreamTrackState {
-        throw new Error('not implemented');
+        return this._readyState;
     };
 
     onended: MediaStreamTrackEventListener | null = null;
@@ -82,7 +83,6 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     }
 
     stop(): void {
-        throw new Error('not implemented');
+        this._readyState = 'ended'
     }
-
 }
