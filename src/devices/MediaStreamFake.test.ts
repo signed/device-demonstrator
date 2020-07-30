@@ -1,6 +1,5 @@
-import { uuidV4 } from './MediaDevicesFake';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
-import { MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { anyMediaStreamTrack } from './MediaStreamTrackMother';
 
 describe('MediaStreamFake', () => {
     test('create a new one', () => {
@@ -8,11 +7,9 @@ describe('MediaStreamFake', () => {
     });
     test('do not leak internal state ', () => {
         const fake = new MediaStreamFake(mediaStreamId(),[]);
-        fake.getTracks().push(new MediaStreamTrackFake(uuidV4()))
+        fake.getTracks().push(anyMediaStreamTrack())
         expect(fake.getTracks()).toHaveLength(0);
     });
-
-    new MediaStreamFake(mediaStreamId(), [new MediaStreamTrackFake(uuidV4())])
 });
 
 describe('mediaStreamId', () => {
