@@ -19,6 +19,14 @@ describe('MediaStreamFake', () => {
         liveTrack.stop()
         expect(fake.active).toBe(false)
     });
+
+    test('filtered tracks', () => {
+        const audioTrack = anyMediaStreamTrack({ kind: 'audio' });
+        const videoTrack = anyMediaStreamTrack({ kind: 'video' });
+        const fake = new MediaStreamFake(mediaStreamId(), [audioTrack, videoTrack]);
+        expect(fake.getAudioTracks()).toEqual([audioTrack])
+        expect(fake.getVideoTracks()).toEqual([videoTrack])
+    });
 });
 
 describe('mediaStreamId', () => {

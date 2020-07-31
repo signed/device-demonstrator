@@ -1,7 +1,9 @@
-import { initialMediaStreamTrackProperties, MediaStreamTrackFake, MediaStreamTrackProperties } from './MediaStreamTrackFake';
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake, MediaStreamTrackProperties, TrackKind } from './MediaStreamTrackFake';
+
+export const anyTrackKind = (): TrackKind => 'video';
 
 export const anyMediaStreamTrack = (overrides: Partial<MediaStreamTrackProperties> = {}) => {
-    const initial = initialMediaStreamTrackProperties();
+    const initial = initialMediaStreamTrackProperties(anyTrackKind());
     const properties = { ...initial, ...overrides };
     return new MediaStreamTrackFake(properties);
 };

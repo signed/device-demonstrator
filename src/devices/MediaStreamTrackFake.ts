@@ -1,15 +1,17 @@
 import { uuidV4 } from './MediaDevicesFake';
 
 type MediaStreamTrackEventListener = (this: MediaStreamTrack, ev: Event) => any
+export type TrackKind = 'audio' | 'video'
 
 export interface MediaStreamTrackProperties {
     id: MediaStreamTrack['id']
     readyState: MediaStreamTrack['readyState']
     enabled: MediaStreamTrack['enabled']
+    kind: TrackKind
 }
 
-export const initialMediaStreamTrackProperties = (): MediaStreamTrackProperties => {
-    return { id: uuidV4(), readyState: 'live', enabled: true };
+export const initialMediaStreamTrackProperties = (kind: TrackKind): MediaStreamTrackProperties => {
+    return { id: uuidV4(), readyState: 'live', enabled: true, kind };
 };
 
 /**
@@ -19,7 +21,6 @@ export const initialMediaStreamTrackProperties = (): MediaStreamTrackProperties 
 export class MediaStreamTrackFake implements MediaStreamTrack {
     constructor(private readonly properties: MediaStreamTrackProperties) {
     }
-
 
     /**
      * The *`enabled`* property on the MediaStreamTrack interface is a Boolean value which is `true` if the track is allowed to render the source stream or `false` if it is not.
@@ -57,7 +58,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
      * It doesn't change if the track is deassociated from its source.
      */
     get kind(): string {
-        throw new Error('not implemented');
+        return this.properties.kind;
     }
 
     /**

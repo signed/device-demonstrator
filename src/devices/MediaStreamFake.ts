@@ -77,7 +77,7 @@ export class MediaStreamFake implements MediaStream {
      * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
      */
     getAudioTracks(): MediaStreamTrackFake[] {
-        throw new Error('not implemented');
+        return this.mediaTracks.filter( track => track.kind === 'audio')
     }
 
     /**
@@ -103,7 +103,7 @@ export class MediaStreamFake implements MediaStream {
      * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
      */
     getVideoTracks(): MediaStreamTrackFake[] {
-        throw new Error('not implemented');
+        return this.mediaTracks.filter( track => track.kind === 'video')
     }
 
     /**

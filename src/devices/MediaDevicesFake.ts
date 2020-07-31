@@ -107,7 +107,7 @@ export class MediaDevicesFake implements MediaDevices {
             return Promise.reject()
         }
         //todo permission management
-        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties());
+        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties('video'));
         const mediaTracks = [mediaTrack]
         return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
     }
