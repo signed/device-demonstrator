@@ -27,6 +27,10 @@ describe('MediaStreamFake', () => {
         expect(fake.getAudioTracks()).toEqual([audioTrack])
         expect(fake.getVideoTracks()).toEqual([videoTrack])
     });
+
+    test('forward passed label', () => {
+
+    });
 });
 
 describe('mediaStreamId', () => {

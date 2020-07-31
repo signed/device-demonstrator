@@ -7,7 +7,7 @@ describe('MediaStreamTrackFake', () => {
     let track: MediaStreamTrackFake;
 
     beforeEach(() => {
-        track = new MediaStreamTrackFake(initialMediaStreamTrackProperties(anyTrackKind()));
+        track = new MediaStreamTrackFake(initialMediaStreamTrackProperties('The Label', anyTrackKind()));
     });
 
     test('enabled by default', () => {
@@ -30,6 +30,9 @@ describe('MediaStreamTrackFake', () => {
     test('ended after stop', () => {
         track.stop()
         expect(track.readyState).toBe('ended')
+    });
+    test('return the label', () => {
+        expect(track.label).toBe('The Label')
     });
 });
 

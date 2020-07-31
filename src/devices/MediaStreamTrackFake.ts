@@ -8,10 +8,11 @@ export interface MediaStreamTrackProperties {
     readyState: MediaStreamTrack['readyState']
     enabled: MediaStreamTrack['enabled']
     kind: TrackKind
+    label: string
 }
 
-export const initialMediaStreamTrackProperties = (kind: TrackKind): MediaStreamTrackProperties => {
-    return { id: uuidV4(), readyState: 'live', enabled: true, kind };
+export const initialMediaStreamTrackProperties = (label: string, kind: TrackKind): MediaStreamTrackProperties => {
+    return { id: uuidV4(), readyState: 'live', enabled: true, kind, label };
 };
 
 /**
@@ -67,7 +68,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
      * When the track is deassociated from its source, the label is not changed.
      */
     get label(): string {
-        throw new Error('not implemented');
+        return this.properties.label
     }
 
     /**
