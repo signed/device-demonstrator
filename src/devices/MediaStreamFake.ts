@@ -87,7 +87,7 @@ export class MediaStreamFake implements MediaStream {
      * @param trackId
      */
     getTrackById(trackId: string): MediaStreamTrackFake | null {
-        throw new Error('not implemented');
+        return this.mediaTracks.find(track => track.id === trackId) ?? null
     }
 
     /**
@@ -109,9 +109,13 @@ export class MediaStreamFake implements MediaStream {
     /**
      * Removes the {@link MediaStreamTrackFake} given as argument.
      * If the track is not part of the MediaStream object, nothing happens.
-     * @param track
+     * @param toRemove
      */
-    removeTrack(track: MediaStreamTrack): void {
-        throw new Error('not implemented');
+    removeTrack(toRemove: MediaStreamTrack): void {
+        const index = this.mediaTracks.findIndex(track => track === toRemove);
+        if (index === -1) {
+            return
+        }
+        this.mediaTracks.splice(index, 1)
     }
 }
