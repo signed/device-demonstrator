@@ -95,7 +95,7 @@ export class MediaDevicesFake implements MediaDevices {
         if (typeof video === 'boolean') {
             const maybeDevice = this.devices.find(device => device.kind === 'videoinput');
             if (maybeDevice === undefined) {
-                throw notImplemented('no camera found');
+                return Promise.reject(new DOMException('Requested device not found'))
             }
             const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(maybeDevice.label, 'video'));
             const mediaTracks = [mediaTrack];
@@ -115,8 +115,7 @@ export class MediaDevicesFake implements MediaDevices {
         const matchingKind = this.devices.filter(device => device.kind === requestedKind);
         const device = matchingKind.find(device => device.deviceId === video.deviceId);
         if (device === undefined) {
-            // todo fallback to any other video device
-            return Promise.reject();
+            throw notImplemented('make sure that it is allowed to fallback to any other device')
         }
         //todo permission management
         const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(device.label, 'video'));

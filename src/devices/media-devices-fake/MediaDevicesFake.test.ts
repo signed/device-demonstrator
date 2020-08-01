@@ -1,6 +1,6 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
-import { allConstraintsFalse, passUndefined, Scenario } from '../test-rig/Scenarios';
+import { allConstraintsFalse, passUndefined, Scenario, requestedDeviceTypeNotAttached } from '../test-rig/Scenarios';
 import '../../to-be-uuid'
 import '../../to-include-video-track'
 
@@ -143,6 +143,18 @@ describe('attach device', () => {
                 expect(await runAndReport(fake, allConstraintsFalse)).toBe('');
             });
         });
+
+        describe('not device of this type is attached', () => {
+            test('return a DOMException', () => {
+                const stream = fake.getUserMedia(requestedDeviceTypeNotAttached.constraints);
+                return expect(stream).rejects.toThrow(new DOMException(`Requested device not found`));
+            });
+
+            test('scenario', async () => {
+                expect(await runAndReport(fake, requestedDeviceTypeNotAttached)).toBe('');
+            });
+        });
+
 
         test('not passing video and audio property results in type error with message', () => {
             const stream = fake.getUserMedia({});
