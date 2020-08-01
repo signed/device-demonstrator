@@ -2,6 +2,7 @@ import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { notImplemented } from './not-implemented';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
 
@@ -35,10 +36,10 @@ export class MediaDevicesFake implements MediaDevices {
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
         if (options) {
-            throw new Error('not implemented');
+            notImplemented()
         }
         if (type !== 'devicechange') {
-            throw new Error('not implemented');
+            notImplemented()
         }
         this.deviceChangeListeners.push(listener);
     }
@@ -48,10 +49,10 @@ export class MediaDevicesFake implements MediaDevices {
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
     removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
         if (options) {
-            throw new Error('not implemented');
+            notImplemented()
         }
         if (type !== 'devicechange') {
-            throw new Error('not implemented');
+            notImplemented()
         }
         const index = this.deviceChangeListeners.indexOf(listener);
         if (index >= 0) {
@@ -60,7 +61,7 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     dispatchEvent(event: Event): boolean {
-        throw new Error('not implemented');
+        throw notImplemented()
     }
 
     enumerateDevices(): Promise<MediaDeviceInfo[]> {
@@ -78,26 +79,26 @@ export class MediaDevicesFake implements MediaDevices {
             return Promise.reject(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
         }
         if (constraints?.peerIdentity) {
-            throw new Error('peerIdentity constraint not implemented');
+            throw notImplemented('peerIdentity constraint not implemented');
         }
         if (constraints?.audio) {
-            throw new Error('audio constraint not implemented');
+            throw notImplemented('audio constraint not implemented');
         }
         const video = constraints?.video;
         if (typeof video === 'boolean') {
-            throw new Error('video boolean parameter not implemented');
+            throw notImplemented('video boolean parameter not implemented');
         }
         if (video === undefined) {
-            throw new Error('current implementation requires a video constraint')
+            throw notImplemented('current implementation requires a video constraint')
         }
         const passedProperties = Object.getOwnPropertyNames(video);
         const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
         const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
         if (unsupported.length) {
-            throw new Error(`constraint not implemented ${unsupported}`)
+            throw notImplemented(`constraint not implemented ${unsupported}`)
         }
         if(video.deviceId === undefined) {
-            throw new Error('current implementation requires a deviceId');
+            throw notImplemented('current implementation requires a deviceId');
         }
         const requestedKind = 'videoinput';
         const matchingKind = this.devices.filter(device => device.kind === requestedKind )
@@ -114,7 +115,7 @@ export class MediaDevicesFake implements MediaDevices {
 
     public attach(toAdd: MediaDeviceDescription) {
         if (this.devices.some(deviceMatching(toAdd))) {
-            throw new Error(`device with this description already attached
+            throw notImplemented(`device with this description already attached
 ${JSON.stringify(toAdd, null, 2)}`);
         }
         // make a defensive copy to stop manipulation after attaching the device

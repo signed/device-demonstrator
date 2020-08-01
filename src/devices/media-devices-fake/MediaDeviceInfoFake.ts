@@ -1,4 +1,5 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
+import { notImplemented } from './not-implemented';
 
 export class MediaDeviceInfoFake implements MediaDeviceInfo {
     constructor(
@@ -23,6 +24,6 @@ export class MediaDeviceInfoFake implements MediaDeviceInfo {
     }
 
     toJSON(): any {
-        throw new Error('not implemented')
+        throw notImplemented()
     }
 }

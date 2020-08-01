@@ -1,4 +1,5 @@
 import { MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { notImplemented } from './not-implemented';
 
 export type MediaStreamEventListener = (this: MediaStream, ev: MediaStreamTrackEvent) => any;
 
@@ -41,18 +42,18 @@ export class MediaStreamFake implements MediaStream {
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
-        throw new Error('not implemented');
+        throw notImplemented();
     }
 
     removeEventListener<K extends keyof MediaStreamEventMap>(type: K, listener: (this: MediaStream, ev: MediaStreamEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
     removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
-        throw new Error('not implemented');
+        throw notImplemented();
     }
 
     dispatchEvent(event: Event): boolean {
-        throw new Error('not implemented');
+        throw notImplemented();
     }
 
     /**
@@ -61,7 +62,7 @@ export class MediaStreamFake implements MediaStream {
      * @param track
      */
     addTrack(track: MediaStreamTrack): void {
-        throw new Error('not implemented');
+        throw notImplemented();
     }
 
     /**
@@ -69,7 +70,7 @@ export class MediaStreamFake implements MediaStream {
      * The clone will, however, have a unique value for {@link MediaStreamFake.id id}.
      */
     clone(): MediaStream {
-        throw new Error('not implemented');
+        throw notImplemented();
     }
 
     /**
