@@ -1,7 +1,7 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
-import { passUndefined, Scenario } from './test-rig/Scenarios';
-import '../to-be-uuid'
+import { passUndefined, Scenario } from '../test-rig/Scenarios';
+import '../../to-be-uuid'
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js

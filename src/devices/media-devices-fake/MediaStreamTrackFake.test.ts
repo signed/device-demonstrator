@@ -1,4 +1,4 @@
-import '../to-be-uuid';
+import '../../to-be-uuid';
 import { uuidV4 } from './MediaDevicesFake';
 import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake';
 import { anyTrackKind } from './MediaStreamTrackMother';
