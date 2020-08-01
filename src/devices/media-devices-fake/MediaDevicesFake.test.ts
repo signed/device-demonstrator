@@ -2,6 +2,7 @@ import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { passUndefined, Scenario } from '../test-rig/Scenarios';
 import '../../to-be-uuid'
+import '../../to-include-video-track'
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -146,15 +147,11 @@ describe('attach device', () => {
             return expect(stream).rejects.toBeDefined();
         });
 
-        test('return any camera device ', async () => {
+        test('return track for an attached camera', async () => {
             fake.attach(anyCamera());
             const stream = await fake.getUserMedia({ video: true });
 
-            const track = stream.getTracks()[0];
-            expect(track.id).toBeUuid()
-            expect(track.enabled).toBe(true)
-            expect(track.readyState).toBe('live')
-            expect(track.kind).toBe('video')
+            expect(stream).toIncludeVideoTrack()
         });
 
         test('return videoinput with matching device id', async () => {
