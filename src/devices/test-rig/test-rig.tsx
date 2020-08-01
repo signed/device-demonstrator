@@ -46,7 +46,7 @@ export const TestRig: React.FC<{}> = () => {
     useEffect(() => {
         if (selectedScenario === undefined) {
             const summaries = Array.from(scenarios.keys());
-            const thisOne = summaries.includes(initial.scenarioSummary)? initial.scenarioSummary : summaries[0];
+            const thisOne = summaries.includes(initial.scenarioSummary) ? initial.scenarioSummary : summaries[0];
             setSelectedScenario(thisOne);
             return;
         }
@@ -67,7 +67,7 @@ export const TestRig: React.FC<{}> = () => {
 
     const handleDetach = () => {
         if (getUserMediaResult instanceof MediaStream) {
-            getUserMediaResult.getTracks().forEach(track => track.stop())
+            getUserMediaResult.getTracks().forEach(track => track.stop());
         }
         setGetUserMediaResult(null);
     };
@@ -125,7 +125,9 @@ export const TestRig: React.FC<{}> = () => {
                     <option value={'denied'}>denied</option>
                     <option value={'prompt'}>prompt</option>
                 </select>
-                <select name="scenarios" onChange={(e) => setSelectedScenario(e.target.value)}>
+                <select name="scenarios"
+                        value={selectedScenario}
+                        onChange={(e) => setSelectedScenario(e.target.value)}>
                     {Array.from(scenarios.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}
                 </select>
             </div>

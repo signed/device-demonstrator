@@ -73,7 +73,7 @@ export const passUndefined: Scenario = {
 export const requestedDeviceTypeNotAttached: Scenario = {
     summary: 'requested device type not attached',
     description: 'Requesting a camera but none is attached',
-    constraints: undefined,
+    constraints: { video: true },
     expected: {
         prompt: undefined,
         denied: undefined,
