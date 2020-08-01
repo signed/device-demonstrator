@@ -69,7 +69,7 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     getSupportedConstraints(): MediaTrackSupportedConstraints {
-        return {};
+        throw notImplemented()
     }
 
     // https://w3c.github.io/mediacapture-main/#methods-5

@@ -35,8 +35,21 @@ export class MediaStreamFake implements MediaStream {
         return this._id;
     }
 
-    public onaddtrack: MediaStreamEventListener | null = null;
-    public onremovetrack: MediaStreamEventListener | null = null;
+    get onaddtrack(): MediaStreamEventListener | null {
+        throw notImplemented();
+    }
+
+    set onaddtrack(_listener: MediaStreamEventListener | null) {
+        throw notImplemented();
+    }
+
+    get onremovetrack(): MediaStreamEventListener | null {
+        throw notImplemented();
+    }
+
+    set onremovetrack(_listener: MediaStreamEventListener | null) {
+        throw notImplemented();
+    }
 
     addEventListener<K extends keyof MediaStreamEventMap>(type: K, listener: (this: MediaStream, ev: MediaStreamEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
@@ -78,7 +91,7 @@ export class MediaStreamFake implements MediaStream {
      * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
      */
     getAudioTracks(): MediaStreamTrackFake[] {
-        return this.mediaTracks.filter( track => track.kind === 'audio')
+        return this.mediaTracks.filter(track => track.kind === 'audio');
     }
 
     /**
@@ -88,7 +101,7 @@ export class MediaStreamFake implements MediaStream {
      * @param trackId
      */
     getTrackById(trackId: string): MediaStreamTrackFake | null {
-        return this.mediaTracks.find(track => track.id === trackId) ?? null
+        return this.mediaTracks.find(track => track.id === trackId) ?? null;
     }
 
     /**
@@ -104,7 +117,7 @@ export class MediaStreamFake implements MediaStream {
      * The order is not defined, and may not only vary from one browser to another, but also from one call to another.
      */
     getVideoTracks(): MediaStreamTrackFake[] {
-        return this.mediaTracks.filter( track => track.kind === 'video')
+        return this.mediaTracks.filter(track => track.kind === 'video');
     }
 
     /**
@@ -115,8 +128,8 @@ export class MediaStreamFake implements MediaStream {
     removeTrack(toRemove: MediaStreamTrack): void {
         const index = this.mediaTracks.findIndex(track => track === toRemove);
         if (index === -1) {
-            return
+            return;
         }
-        this.mediaTracks.splice(index, 1)
+        this.mediaTracks.splice(index, 1);
     }
 }

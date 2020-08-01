@@ -69,7 +69,7 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
      * When the track is deassociated from its source, the label is not changed.
      */
     get label(): string {
-        return this.properties.label
+        return this.properties.label;
     }
 
     /**
@@ -86,10 +86,37 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
         return this.properties.readyState;
     };
 
-    onended: MediaStreamTrackEventListener | null = null;
-    onisolationchange: MediaStreamTrackEventListener | null = null;
-    onmute: MediaStreamTrackEventListener | null = null;
-    onunmute: MediaStreamTrackEventListener | null = null;
+    set onended(_listener: MediaStreamTrackEventListener | null) {
+        throw notImplemented();
+    };
+
+    get onended(): MediaStreamTrackEventListener | null {
+        throw notImplemented();
+    };
+
+    set onisolationchange(_listener: MediaStreamTrackEventListener | null) {
+        throw notImplemented();
+    };
+
+    get onisolationchange(): MediaStreamTrackEventListener | null {
+        throw notImplemented();
+    };
+
+    set onmute(_listener: MediaStreamTrackEventListener | null) {
+        throw notImplemented();
+    };
+
+    get onmute(): MediaStreamTrackEventListener | null {
+        throw notImplemented();
+    };
+
+    set onunmute(_listener: MediaStreamTrackEventListener | null) {
+        throw notImplemented();
+    };
+
+    get onunmute(): MediaStreamTrackEventListener | null {
+        throw notImplemented();
+    };
 
     addEventListener<K extends keyof MediaStreamTrackEventMap>(type: K, listener: (this: MediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
