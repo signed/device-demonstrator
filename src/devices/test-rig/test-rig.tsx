@@ -65,10 +65,15 @@ export const TestRig: React.FC<{}> = () => {
             .catch((err: Error) => setGetUserMediaResult(() => err));
     };
 
+    const handleClearChecks = () => {
+        setResults(() => []);
+    };
+
     const handleDetach = () => {
         if (getUserMediaResult instanceof MediaStream) {
             getUserMediaResult.getTracks().forEach(track => track.stop());
         }
+        handleClearChecks()
         setGetUserMediaResult(null);
     };
 
@@ -94,9 +99,6 @@ export const TestRig: React.FC<{}> = () => {
         setResults(await Promise.all(results));
     };
 
-    const handleClearChecks = () => {
-        setResults(() => []);
-    };
 
     const blub: CSSProperties = {
         display: 'flex',
@@ -134,7 +136,7 @@ export const TestRig: React.FC<{}> = () => {
             <textarea value={constraintsAsString} onChange={(e) => setConstraintsAsString(e.target.value)}/>
             <button onClick={handleStart}>start</button>
             <button disabled={getUserMediaResult === null} onClick={handleRunChecks}>run checks</button>
-            <button onClick={handleClearChecks}>clear checks</button>
+            <button disabled={results.length === 0} onClick={handleClearChecks}>clear checks</button>
             <button onClick={handleDetach}>detach</button>
             <ul key={'results'}>
                 {results.map((result, checkIndex) => {
