@@ -66,6 +66,9 @@ export const TestRig: React.FC<{}> = () => {
     };
 
     const handleDetach = () => {
+        if (getUserMediaResult instanceof MediaStream) {
+            getUserMediaResult.getTracks().forEach(track => track.stop())
+        }
         setGetUserMediaResult(null);
     };
 
