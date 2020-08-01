@@ -17,6 +17,7 @@ export const uuidV4 = () => {
     });
 };
 
+const toMediaDeviceDescription = (device: MediaDeviceInfoFake): MediaDeviceDescription => ({ deviceId: device.deviceId, groupId: device.groupId, label: device.label, kind: device.kind });
 
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
@@ -113,6 +114,9 @@ export class MediaDevicesFake implements MediaDevices {
         }
         const requestedKind = 'videoinput';
         const matchingKind = this.devices.filter(device => device.kind === requestedKind);
+        if (matchingKind.length === 0) {
+            return Promise.reject(new DOMException('Requested device not found'))
+        }
         const device = matchingKind.find(device => device.deviceId === video.deviceId);
         if (device === undefined) {
             throw notImplemented('make sure that it is allowed to fallback to any other device')
@@ -121,6 +125,11 @@ export class MediaDevicesFake implements MediaDevices {
         const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(device.label, 'video'));
         const mediaTracks = [mediaTrack];
         return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
+    }
+
+    public noDevicesAttached(){
+        this.devices.map(device => toMediaDeviceDescription(device))
+            .forEach(descriptor => this.remove(descriptor))
     }
 
     public attach(toAdd: MediaDeviceDescription) {

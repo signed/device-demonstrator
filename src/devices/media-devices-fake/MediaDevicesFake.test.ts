@@ -1,8 +1,8 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
 import { allConstraintsFalse, passUndefined, Scenario, requestedDeviceTypeNotAttached } from '../test-rig/Scenarios';
-import '../../to-be-uuid'
-import '../../to-include-video-track'
+import '../../to-be-uuid';
+import '../../to-include-video-track';
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -16,9 +16,9 @@ const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceD
     };
 };
 
-const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription =>{
-    return anyDevice({ ... override, kind: 'videoinput'})
-}
+const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription => {
+    return anyDevice({ ...override, kind: 'videoinput' });
+};
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
     const stream = fake.getUserMedia(scenario.constraints);
@@ -155,38 +155,40 @@ describe('attach device', () => {
             });
         });
 
-
         test('not passing video and audio property results in type error with message', () => {
             const stream = fake.getUserMedia({});
             return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
         });
 
-        test.skip('reject promise in case no videoinput device is attached', () => {
-            const stream = fake.getUserMedia({
-                video: {
-                    deviceId: 'no-videoinput-device'
-                }
+        describe('reject promise in case no videoinput device is attached', () => {
+            test('reject promise in case no videoinput device is attached', () => {
+                fake.noDevicesAttached()
+                const stream = fake.getUserMedia(requestedDeviceTypeNotAttached.constraints);
+                return expect(stream).rejects.toThrow(new DOMException('Requested device not found'));
             });
-            return expect(stream).rejects.toBeDefined();
+            test('scenario', async () => {
+                fake.noDevicesAttached()
+                expect(await runAndReport(fake, requestedDeviceTypeNotAttached)).toBe('')
+            });
         });
 
         test('return track for an attached camera', async () => {
             fake.attach(anyCamera());
             const stream = await fake.getUserMedia({ video: true });
 
-            expect(stream).toIncludeVideoTrack()
+            expect(stream).toIncludeVideoTrack();
         });
 
         test('return videoinput with matching device id', async () => {
             fake.attach(anyCamera({ deviceId: 'attached' }));
             const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } });
             expect(stream).toBeDefined();
-            expect(stream.getTracks()).toHaveLength(1)
+            expect(stream.getTracks()).toHaveLength(1);
             const track = stream.getTracks()[0];
-            expect(track.id).toBeUuid()
-            expect(track.enabled).toBe(true)
-            expect(track.readyState).toBe('live')
-            expect(track.kind).toBe('video')
+            expect(track.id).toBeUuid();
+            expect(track.enabled).toBe(true);
+            expect(track.readyState).toBe('live');
+            expect(track.kind).toBe('video');
         });
     });
 });
