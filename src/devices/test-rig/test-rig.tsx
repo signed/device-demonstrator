@@ -26,6 +26,7 @@ export const TestRig: React.FC<{}> = () => {
     const [constraints, setConstraints] = useState<MediaStreamConstraints>();
     const [getUserMediaResult, setGetUserMediaResult] = useState<GetUserMediaResult | null>(null);
     const [results, setResults] = useState<Result[]>([]);
+    const [permissionState, setPermissionState] = useState<PermissionState>('denied');
 
     useEffect(() => {
         try {
@@ -67,8 +68,8 @@ export const TestRig: React.FC<{}> = () => {
         if (scenario === undefined || getUserMediaResult === null) {
             return;
         }
-        const permissionState = scenario.expected.granted;
-        const results = permissionState.checks.map(async check => {
+        const checks = scenario.expected[permissionState]?.checks ?? [];
+        const results = checks.map(async check => {
             let result: MediaStreamCheckResult;
             try {
                 result = await check.predicate(reconstructPromiseFrom(getUserMediaResult));
@@ -76,13 +77,11 @@ export const TestRig: React.FC<{}> = () => {
                 const messages = [`check threw exception ${e.toString()}`];
                 result = { success: false, messages };
             }
-
             return ({
                 what: check.what,
                 details: result
             });
         });
-
         setResults(await Promise.all(results));
     };
 
@@ -107,10 +106,15 @@ export const TestRig: React.FC<{}> = () => {
                     <option>camera</option>
                     <option>microphone</option>
                 </select>
-                <select name="permission">
-                    <option>allowed</option>
-                    <option>denied</option>
-                    <option>ask</option>
+                <select name="permission" onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'granted' || value === 'denied' || value === 'prompt') {
+                        setPermissionState(value);
+                    }
+                }}>
+                    <option value={'granted'}>granted</option>
+                    <option value={'denied'}>denied</option>
+                    <option value={'prompt'}>prompt</option>
                 </select>
                 <select name="scenarios" onChange={(e) => setSelectedScenario(e.target.value)}>
                     {Array.from(scenarios.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}

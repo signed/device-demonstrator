@@ -28,17 +28,13 @@ interface Expected {
     checks: MediaStreamCheck[]
 }
 
-interface PermissionState {
-    granted: Expected;
-    denied?: Expected;
-    ask?: Expected;
-}
+type Matrix = Record<PermissionState, Expected | undefined>
 
 export interface Scenario {
     summary: string;
     description: string;
     constraints?: MediaStreamConstraints;
-    expected: PermissionState;
+    expected: Matrix;
 }
 
 export const noDeviceWithDeviceId: Scenario = {
@@ -46,6 +42,8 @@ export const noDeviceWithDeviceId: Scenario = {
     description: 'the constraint contains a deviceId that no device has',
     constraints: { audio: { deviceId: 'bogus' } },
     expected: {
+        prompt: undefined,
+        denied: undefined,
         granted: {
             description: 'fallback to any other audio device',
             checks: [
@@ -65,15 +63,41 @@ export const noDeviceWithDeviceId: Scenario = {
                 }
             ]
         }
-
     }
 };
 
 export const existingDevice: Scenario = {
     summary: 'existing device',
-    description: 'the constraint contains a deviceId of an existing device',
-    constraints: { video: { deviceId: '77df7c3d3f24890c51364752fb295895fbebdc821755f6706f5bcd06e6e63269' } },
+    description: 'any camera device without any other constraints',
+    constraints: { video: true },
     expected: {
+        prompt: undefined,
+        denied: {
+            description: 'should be rejected',
+            checks: [
+                {
+                    what: 'DOMException',
+                    predicate: error((error) => {
+                        const success = error instanceof DOMException;
+                        const messages = [
+                            `got: ${error.constructor.name}`
+                        ];
+                        return { success, messages };
+                    })
+                },
+                {
+                    what: 'NotAllowedError',
+                    predicate: error((error) => {
+                        const actual = error.name;
+                        const success = actual === 'NotAllowedError';
+                        const messages = [
+                            `got: ${actual}`
+                        ];
+                        return { success, messages };
+                    })
+                }
+            ]
+        },
         granted: {
             description: 'tbd',
             checks: []
@@ -86,6 +110,8 @@ export const passUndefined: Scenario = {
     description: 'pass undefined as constraints',
     constraints: undefined,
     expected: {
+        prompt: undefined,
+        denied: undefined,
         granted: {
             description: 'reject and communicate that at least one constrain has to be present',
             checks: [
@@ -111,14 +137,13 @@ export const passUndefined: Scenario = {
                 }
             ]
         }
-
     }
 };
 
 const collectScenarios = () => {
     const result = new Map<string, Scenario>();
-    result.set(noDeviceWithDeviceId.summary, noDeviceWithDeviceId);
     result.set(existingDevice.summary, existingDevice);
+    result.set(noDeviceWithDeviceId.summary, noDeviceWithDeviceId);
     result.set(passUndefined.summary, passUndefined);
     return result;
 };
