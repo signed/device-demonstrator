@@ -70,6 +70,40 @@ export const passUndefined: Scenario = {
     }
 };
 
+export const requestedDeviceTypeNotAttached: Scenario = {
+    summary: 'requested device type not attached',
+    description: 'Requesting a camera but none is attached',
+    constraints: undefined,
+    expected: {
+        prompt: undefined,
+        denied: undefined,
+        granted: {
+            description: 'reject and communicate that the requested device was not found',
+            checks: [
+                {
+                    what: 'DOMException',
+                    predicate: error((err) => {
+                        const success = err instanceof DOMException;
+                        const messages = [`got: ${err.toString()}`];
+                        return { success, messages };
+                    })
+                }, {
+                    what: 'error message',
+                    predicate: error((err) => {
+                        const expected = `Requested device not found`;
+                        const success = err.message === expected;
+                        const messages = [
+                            `expected: ${expected}`,
+                            `got: '${err.message}'`
+                        ];
+                        return { success, messages };
+                    })
+                }
+            ]
+        }
+    }
+};
+
 export const allConstraintsFalse: Scenario = {
     summary: 'all constraints false',
     description: 'pass false to the video and audio constraint',
@@ -182,6 +216,7 @@ const collectScenarios = () => {
     result.set(noDeviceWithDeviceId.summary, noDeviceWithDeviceId);
     result.set(passUndefined.summary, passUndefined);
     result.set(allConstraintsFalse.summary, allConstraintsFalse);
+    result.set(requestedDeviceTypeNotAttached.summary, requestedDeviceTypeNotAttached);
     return result;
 };
 

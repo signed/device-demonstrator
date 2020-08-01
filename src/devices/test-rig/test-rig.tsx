@@ -2,7 +2,7 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { Hide } from '../camera/Hide';
 import { ErrorView } from './ErrorView';
 import { Json } from './Json';
-import { allConstraintsFalse, MediaStreamCheckResult, scenarios } from './Scenarios';
+import { MediaStreamCheckResult, requestedDeviceTypeNotAttached, scenarios } from './Scenarios';
 import { StreamView } from './StreamView';
 
 export interface Result {
@@ -21,7 +21,7 @@ const reconstructPromiseFrom = (result: GetUserMediaResult): Promise<MediaStream
 
 const initial: { permissionState: PermissionState, scenarioSummary: string } = {
     permissionState: 'granted',
-    scenarioSummary: allConstraintsFalse.summary
+    scenarioSummary: requestedDeviceTypeNotAttached.summary
 };
 
 export const TestRig: React.FC<{}> = () => {
