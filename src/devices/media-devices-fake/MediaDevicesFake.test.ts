@@ -1,6 +1,6 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
-import { passUndefined, Scenario } from '../test-rig/Scenarios';
+import { allConstraintsFalse, passUndefined, Scenario } from '../test-rig/Scenarios';
 import '../../to-be-uuid'
 import '../../to-include-video-track'
 
@@ -131,6 +131,17 @@ describe('attach device', () => {
                 expect(await runAndReport(fake, passUndefined)).toBe('');
             });
 
+        });
+
+        describe('all passed constraints are false', () => {
+            test('returns type error', () => {
+                const stream = fake.getUserMedia(allConstraintsFalse.constraints);
+                return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
+            });
+
+            test('scenario', async () => {
+                expect(await runAndReport(fake, allConstraintsFalse)).toBe('');
+            });
         });
 
         test('not passing video and audio property results in type error with message', () => {

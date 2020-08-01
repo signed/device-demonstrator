@@ -36,10 +36,10 @@ export class MediaDevicesFake implements MediaDevices {
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
         if (options) {
-            throw notImplemented()
+            throw notImplemented();
         }
         if (type !== 'devicechange') {
-            throw notImplemented()
+            throw notImplemented();
         }
         this.deviceChangeListeners.push(listener);
     }
@@ -49,10 +49,10 @@ export class MediaDevicesFake implements MediaDevices {
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
     removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
         if (options) {
-            throw notImplemented()
+            throw notImplemented();
         }
         if (type !== 'devicechange') {
-            throw notImplemented()
+            throw notImplemented();
         }
         const index = this.deviceChangeListeners.indexOf(listener);
         if (index >= 0) {
@@ -61,7 +61,7 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     dispatchEvent(event: Event): boolean {
-        throw notImplemented()
+        throw notImplemented();
     }
 
     enumerateDevices(): Promise<MediaDeviceInfo[]> {
@@ -69,14 +69,16 @@ export class MediaDevicesFake implements MediaDevices {
     }
 
     getSupportedConstraints(): MediaTrackSupportedConstraints {
-        throw notImplemented()
+        throw notImplemented();
     }
 
     // https://w3c.github.io/mediacapture-main/#methods-5
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     // https://blog.addpipe.com/common-getusermedia-errors/
     getUserMedia(constraints?: MediaStreamConstraints): Promise<MediaStream> {
-        if (constraints === undefined || Object.keys(constraints).length === 0 ) {
+        if (constraints === undefined ||
+            Object.keys(constraints).length === 0 ||
+            (constraints.video === false && constraints.audio === false)) {
             return Promise.reject(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
         }
         if (constraints?.peerIdentity) {
@@ -87,7 +89,7 @@ export class MediaDevicesFake implements MediaDevices {
         }
         const video = constraints?.video;
         if (video === undefined) {
-            throw notImplemented('current implementation requires a video constraint')
+            throw notImplemented('current implementation requires a video constraint');
         }
 
         if (typeof video === 'boolean') {
@@ -96,7 +98,7 @@ export class MediaDevicesFake implements MediaDevices {
                 throw notImplemented('no camera found');
             }
             const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(maybeDevice.label, 'video'));
-            const mediaTracks = [mediaTrack]
+            const mediaTracks = [mediaTrack];
             return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
         }
 
@@ -104,21 +106,21 @@ export class MediaDevicesFake implements MediaDevices {
         const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
         const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
         if (unsupported.length) {
-            throw notImplemented(`constraint not implemented ${unsupported}`)
+            throw notImplemented(`constraint not implemented ${unsupported}`);
         }
-        if(video.deviceId === undefined) {
+        if (video.deviceId === undefined) {
             throw notImplemented('current implementation requires a deviceId');
         }
         const requestedKind = 'videoinput';
-        const matchingKind = this.devices.filter(device => device.kind === requestedKind )
+        const matchingKind = this.devices.filter(device => device.kind === requestedKind);
         const device = matchingKind.find(device => device.deviceId === video.deviceId);
-        if(device === undefined){
+        if (device === undefined) {
             // todo fallback to any other video device
-            return Promise.reject()
+            return Promise.reject();
         }
         //todo permission management
         const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(device.label, 'video'));
-        const mediaTracks = [mediaTrack]
+        const mediaTracks = [mediaTrack];
         return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
     }
 

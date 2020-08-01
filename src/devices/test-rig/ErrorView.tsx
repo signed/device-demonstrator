@@ -10,6 +10,9 @@ export const ErrorView: React.FC<{ error: Error }> = (props) => {
         <dt>error.constructor.name</dt>
         <dd>{error.constructor.name}</dd>
 
+        <dt>error.message</dt>
+        <dd>{error.message}</dd>
+
         <dt>JSON.stringify(error, null, 2)</dt>
         <dd>{JSON.stringify(error, null, 2)}</dd>
     </dl>

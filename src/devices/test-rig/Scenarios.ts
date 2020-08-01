@@ -36,6 +36,78 @@ export interface Scenario {
     expected: Matrix;
 }
 
+export const passUndefined: Scenario = {
+    summary: 'undefined constraints',
+    description: 'pass undefined as constraints',
+    constraints: undefined,
+    expected: {
+        prompt: undefined,
+        denied: undefined,
+        granted: {
+            description: 'reject and communicate that at least one constrain has to be present',
+            checks: [
+                {
+                    what: 'TypeError',
+                    predicate: error((err) => {
+                        const success = err instanceof TypeError;
+                        const messages = [`got: ${err.toString()}`];
+                        return { success, messages };
+                    })
+                }, {
+                    what: 'error message',
+                    predicate: error((err) => {
+                        const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`;
+                        const success = err.message === expected;
+                        const messages = [
+                            `expected: ${expected}`,
+                            `got: '${err.message}'`
+                        ];
+                        return { success, messages };
+                    })
+                }
+            ]
+        }
+    }
+};
+
+export const allConstraintsFalse: Scenario = {
+    summary: 'all constraints false',
+    description: 'pass false to the video and audio constraint',
+    constraints: {
+        audio: false,
+        video: false
+    },
+    expected: {
+        prompt: undefined,
+        denied: undefined,
+        granted: {
+            description: 'reject and communicate that at least one constrain has to be set to true',
+            checks: [
+                {
+                    what: 'TypeError',
+                    predicate: error((err) => {
+                        const success = err instanceof TypeError;
+                        const messages = [`got: ${err.toString()}`];
+                        return { success, messages };
+                    })
+                }, {
+                    what: 'error message',
+                    predicate: error((err) => {
+                        const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`;
+                        const success = err.message === expected;
+                        const messages = [
+                            `expected: ${expected}`,
+                            `got: '${err.message}'`
+                        ];
+                        return { success, messages };
+                    })
+                }
+            ]
+        }
+    }
+};
+
+
 export const noDeviceWithDeviceId: Scenario = {
     summary: 'bogus device id',
     description: 'the constraint contains a deviceId that no device has',
@@ -104,46 +176,12 @@ export const existingDevice: Scenario = {
     }
 };
 
-export const passUndefined: Scenario = {
-    summary: 'undefined constraints',
-    description: 'pass undefined as constraints',
-    constraints: undefined,
-    expected: {
-        prompt: undefined,
-        denied: undefined,
-        granted: {
-            description: 'reject and communicate that at least one constrain has to be present',
-            checks: [
-                {
-                    what: 'TypeError',
-                    predicate: error((err) => {
-                        const success = err instanceof TypeError;
-                        const messages = [`got: ${err.toString()}`];
-                        return { success, messages };
-                    })
-                }, {
-                    what: 'error message',
-                    predicate: error((err) => {
-                        const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`;
-                        const success = err.message === expected;
-                        const messages = [
-                            `expected: ${expected}`,
-                            `got: '${err.message}'`
-                        ];
-
-                        return { success, messages };
-                    })
-                }
-            ]
-        }
-    }
-};
-
 const collectScenarios = () => {
     const result = new Map<string, Scenario>();
     result.set(existingDevice.summary, existingDevice);
     result.set(noDeviceWithDeviceId.summary, noDeviceWithDeviceId);
     result.set(passUndefined.summary, passUndefined);
+    result.set(allConstraintsFalse.summary, allConstraintsFalse);
     return result;
 };
 
