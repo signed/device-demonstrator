@@ -86,6 +86,10 @@ export class MediaDevicesFake implements MediaDevices {
             throw notImplemented('audio constraint not implemented');
         }
         const video = constraints?.video;
+        if (video === undefined) {
+            throw notImplemented('current implementation requires a video constraint')
+        }
+
         if (typeof video === 'boolean') {
             const maybeDevice = this.devices.find(device => device.kind === 'videoinput');
             if (maybeDevice === undefined) {
@@ -95,9 +99,7 @@ export class MediaDevicesFake implements MediaDevices {
             const mediaTracks = [mediaTrack]
             return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
         }
-        if (video === undefined) {
-            throw notImplemented('current implementation requires a video constraint')
-        }
+
         const passedProperties = Object.getOwnPropertyNames(video);
         const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
         const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
