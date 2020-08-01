@@ -117,9 +117,9 @@ export class MediaDevicesFake implements MediaDevices {
         if (matchingKind.length === 0) {
             return Promise.reject(new DOMException('Requested device not found'))
         }
-        const device = matchingKind.find(device => device.deviceId === video.deviceId);
+        let device = matchingKind.find(device => device.deviceId === video.deviceId);
         if (device === undefined) {
-            throw notImplemented('make sure that it is allowed to fallback to any other device')
+            device = matchingKind[0];
         }
         //todo permission management
         const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(device.label, 'video'));

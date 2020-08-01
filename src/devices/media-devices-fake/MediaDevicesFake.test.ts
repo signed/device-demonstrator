@@ -1,6 +1,6 @@
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDevicesFake } from './MediaDevicesFake';
-import { allConstraintsFalse, passUndefined, Scenario, requestedDeviceTypeNotAttached } from '../test-rig/Scenarios';
+import { allConstraintsFalse, passUndefined, Scenario, requestedDeviceTypeNotAttached, noDeviceWithDeviceId } from '../test-rig/Scenarios';
 import '../../to-be-uuid';
 import '../../to-include-video-track';
 
@@ -177,6 +177,13 @@ describe('attach device', () => {
             const stream = await fake.getUserMedia({ video: true });
 
             expect(stream).toIncludeVideoTrack();
+        });
+
+        describe('return another device of the same kind in case no device with the given id is attached', () => {
+            test('scenario', async () => {
+                fake.attach(anyCamera({deviceId: 'actually connected'}))
+                expect(await runAndReport(fake, noDeviceWithDeviceId)).toBe('')
+            });
         });
 
         test('return videoinput with matching device id', async () => {
