@@ -28,11 +28,17 @@ interface Expected {
     checks: MediaStreamCheck[]
 }
 
+interface PermissionState {
+    granted: Expected;
+    denied?: Expected;
+    ask?: Expected;
+}
+
 export interface Scenario {
     summary: string;
     description: string;
-    constraints?: MediaStreamConstraints,
-    expected: Expected
+    constraints?: MediaStreamConstraints;
+    expected: PermissionState;
 }
 
 export const noDeviceWithDeviceId: Scenario = {
@@ -40,23 +46,26 @@ export const noDeviceWithDeviceId: Scenario = {
     description: 'the constraint contains a deviceId that no device has',
     constraints: { audio: { deviceId: 'bogus' } },
     expected: {
-        description: 'fallback to any other audio device',
-        checks: [
-            {
-                what: 'stream is active',
-                predicate: mediaStream((stream) => {
-                    const success = stream.active;
-                    return { success };
-                })
-            }
-            , {
-                what: 'stream has an id',
-                predicate: mediaStream((stream) => {
-                    const success = stream.id.length > 0;
-                    return { success };
-                })
-            }
-        ]
+        granted: {
+            description: 'fallback to any other audio device',
+            checks: [
+                {
+                    what: 'stream is active',
+                    predicate: mediaStream((stream) => {
+                        const success = stream.active;
+                        return { success };
+                    })
+                }
+                , {
+                    what: 'stream has an id',
+                    predicate: mediaStream((stream) => {
+                        const success = stream.id.length > 0;
+                        return { success };
+                    })
+                }
+            ]
+        }
+
     }
 };
 
@@ -65,8 +74,10 @@ export const existingDevice: Scenario = {
     description: 'the constraint contains a deviceId of an existing device',
     constraints: { video: { deviceId: '77df7c3d3f24890c51364752fb295895fbebdc821755f6706f5bcd06e6e63269' } },
     expected: {
-        description: 'tbd',
-        checks: []
+        granted: {
+            description: 'tbd',
+            checks: []
+        }
     }
 };
 
@@ -75,29 +86,32 @@ export const passUndefined: Scenario = {
     description: 'pass undefined as constraints',
     constraints: undefined,
     expected: {
-        description: 'reject and communicate that at least one constrain has to be present',
-        checks: [
-            {
-                what: 'TypeError',
-                predicate: error((err) => {
-                    const success = err instanceof TypeError;
-                    const messages = [`got: ${err.toString()}`];
-                    return { success, messages };
-                })
-            }, {
-                what: 'error message',
-                predicate: error((err) => {
-                    const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`;
-                    const success = err.message === expected;
-                    const messages = [
-                        `expected: ${expected}`,
-                        `got: '${err.message}'`
-                    ];
+        granted: {
+            description: 'reject and communicate that at least one constrain has to be present',
+            checks: [
+                {
+                    what: 'TypeError',
+                    predicate: error((err) => {
+                        const success = err instanceof TypeError;
+                        const messages = [`got: ${err.toString()}`];
+                        return { success, messages };
+                    })
+                }, {
+                    what: 'error message',
+                    predicate: error((err) => {
+                        const expected = `Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`;
+                        const success = err.message === expected;
+                        const messages = [
+                            `expected: ${expected}`,
+                            `got: '${err.message}'`
+                        ];
 
-                    return { success, messages };
-                })
-            }
-        ]
+                        return { success, messages };
+                    })
+                }
+            ]
+        }
+
     }
 };
 

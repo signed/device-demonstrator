@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { Hide } from '../camera/Hide';
 import { ErrorView } from './ErrorView';
 import { Json } from './Json';
@@ -67,7 +67,8 @@ export const TestRig: React.FC<{}> = () => {
         if (scenario === undefined || getUserMediaResult === null) {
             return;
         }
-        const results = scenario.expected.checks.map(async check => {
+        const permissionState = scenario.expected.granted;
+        const results = permissionState.checks.map(async check => {
             let result: MediaStreamCheckResult;
             try {
                 result = await check.predicate(reconstructPromiseFrom(getUserMediaResult));
@@ -89,32 +90,54 @@ export const TestRig: React.FC<{}> = () => {
         setResults(() => []);
     };
 
+    const blub: CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column'
+    };
+    const banana: CSSProperties = {
+        display: 'flex',
+        flexDirection: 'row'
+    };
+
     return <div>
         <h1 key={'test-rig'}>Test Rig{parseError ? ' (parse error)' : ''}</h1>
-        <select name="scenarios" onChange={(e) => setSelectedScenario(e.target.value)}>
-            {Array.from(scenarios.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}
-        </select>
-        <textarea value={constraintsAsString} onChange={(e) => setConstraintsAsString(e.target.value)}/>
-        <button onClick={handleStart}>start</button>
-        <button disabled={getUserMediaResult === null} onClick={handleRunChecks}>run checks</button>
-        <button onClick={handleClearChecks}>clear checks</button>
-        <button onClick={handleDetach}>detach</button>
-        <ul key={'results'}>
-            {results.map((result, checkIndex) => {
-                const success = result.details.success ? '✅' : '❌';
-                const messages = result.details.messages ?? [];
+        <div style={banana}>
+            <div style={blub}>
+                <select name="device">
+                    <option>camera</option>
+                    <option>microphone</option>
+                </select>
+                <select name="permission">
+                    <option>allowed</option>
+                    <option>denied</option>
+                    <option>ask</option>
+                </select>
+                <select name="scenarios" onChange={(e) => setSelectedScenario(e.target.value)}>
+                    {Array.from(scenarios.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}
+                </select>
+            </div>
+            <textarea value={constraintsAsString} onChange={(e) => setConstraintsAsString(e.target.value)}/>
+            <button onClick={handleStart}>start</button>
+            <button disabled={getUserMediaResult === null} onClick={handleRunChecks}>run checks</button>
+            <button onClick={handleClearChecks}>clear checks</button>
+            <button onClick={handleDetach}>detach</button>
+            <ul key={'results'}>
+                {results.map((result, checkIndex) => {
+                    const success = result.details.success ? '✅' : '❌';
+                    const messages = result.details.messages ?? [];
 
-                const showMessages = !result.details.success && messages.length !== 0;
-                const messagesView = showMessages ? <ul key={`message ${checkIndex}`}>
-                    {messages.map((message, messageIndex) => <li key={`message ${checkIndex} ${messageIndex}` }>{message}</li>)}
-                </ul>: null;
+                    const showMessages = !result.details.success && messages.length !== 0;
+                    const messagesView = showMessages ? <ul key={`message ${checkIndex}`}>
+                        {messages.map((message, messageIndex) => <li key={`message ${checkIndex} ${messageIndex}`}>{message}</li>)}
+                    </ul> : null;
 
-                return <React.Fragment key={`doombuggy ${checkIndex}`}>
-                    <li key={`check result ${checkIndex}`}>{`${success}: ${result.what}`}</li>
-                    {messagesView}
-                </React.Fragment>;
-            })}
-        </ul>
+                    return <React.Fragment key={`doombuggy ${checkIndex}`}>
+                        <li key={`check result ${checkIndex}`}>{`${success}: ${result.what}`}</li>
+                        {messagesView}
+                    </React.Fragment>;
+                })}
+            </ul>
+        </div>
         {getUserMediaResult === null ? null :
             getUserMediaResult instanceof MediaStream ?
                 <StreamView stream={getUserMediaResult}/> :
