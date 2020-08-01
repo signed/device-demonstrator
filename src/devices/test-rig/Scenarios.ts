@@ -17,7 +17,6 @@ const error: (input: ErrorPredicate) => MediaStreamPromisePredicate = (input: Er
     };
 };
 
-
 type MediaStreamCheck = {
     what: string;
     predicate: MediaStreamPromisePredicate

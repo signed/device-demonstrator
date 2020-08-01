@@ -3,7 +3,7 @@ import { Hide } from '../camera/Hide';
 import { ErrorView } from './ErrorView';
 import { Json } from './Json';
 import { StreamView } from './StreamView';
-import { MediaStreamCheckResult, scenarios } from './Scenarios';
+import { existingDevice, MediaStreamCheckResult, scenarios } from './Scenarios';
 
 export interface Result {
     what: string;
@@ -19,6 +19,11 @@ const reconstructPromiseFrom = (result: GetUserMediaResult): Promise<MediaStream
     return Promise.resolve(result);
 };
 
+const initial: { permissionState: PermissionState, scenarioSummary: string } = {
+    permissionState: 'denied',
+    scenarioSummary: existingDevice.summary
+};
+
 export const TestRig: React.FC<{}> = () => {
     const [selectedScenario, setSelectedScenario] = useState<string>();
     const [constraintsAsString, setConstraintsAsString] = useState('');
@@ -26,7 +31,7 @@ export const TestRig: React.FC<{}> = () => {
     const [constraints, setConstraints] = useState<MediaStreamConstraints>();
     const [getUserMediaResult, setGetUserMediaResult] = useState<GetUserMediaResult | null>(null);
     const [results, setResults] = useState<Result[]>([]);
-    const [permissionState, setPermissionState] = useState<PermissionState>('denied');
+    const [permissionState, setPermissionState] = useState<PermissionState>(initial.permissionState);
 
     useEffect(() => {
         try {
@@ -40,8 +45,9 @@ export const TestRig: React.FC<{}> = () => {
 
     useEffect(() => {
         if (selectedScenario === undefined) {
-            const first = Array.from(scenarios.keys())[0];
-            setSelectedScenario(first);
+            const summaries = Array.from(scenarios.keys());
+            const thisOne = summaries.includes(initial.scenarioSummary)? initial.scenarioSummary : summaries[0];
+            setSelectedScenario(thisOne);
             return;
         }
         const scenarioConstrains = scenarios.get(selectedScenario)?.constraints;
@@ -111,7 +117,7 @@ export const TestRig: React.FC<{}> = () => {
                     if (value === 'granted' || value === 'denied' || value === 'prompt') {
                         setPermissionState(value);
                     }
-                }}>
+                }} value={permissionState}>
                     <option value={'granted'}>granted</option>
                     <option value={'denied'}>denied</option>
                     <option value={'prompt'}>prompt</option>
