@@ -145,7 +145,7 @@ export const allConstraintsFalse: Scenario = {
 export const noDeviceWithDeviceId: Scenario = {
     summary: 'bogus device id',
     description: 'the constraint contains a deviceId that no device has',
-    constraints: { audio: { deviceId: 'bogus' } },
+    constraints: { video: { deviceId: 'bogus' } },
     expected: {
         prompt: undefined,
         denied: undefined,
