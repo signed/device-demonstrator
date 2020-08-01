@@ -5,7 +5,6 @@ import '../../to-be-uuid'
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
-
 const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceDescription => {
     return {
         deviceId: 'camera-device-id',
@@ -15,6 +14,10 @@ const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceD
         ...override
     };
 };
+
+const anyCamera = (override: Partial<Omit<MediaDeviceDescription, 'kind'>> = {}): MediaDeviceDescription =>{
+    return anyDevice({ ... override, kind: 'videoinput'})
+}
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
     const stream = fake.getUserMedia(scenario.constraints);
@@ -117,7 +120,6 @@ describe('attach device', () => {
     });
 
     describe('getUserMedia', () => {
-
         describe('no constraints', () => {
             test('returns type error', () => {
                 const stream = fake.getUserMedia();
@@ -130,7 +132,7 @@ describe('attach device', () => {
 
         });
 
-        test('not passing video and audio property results in type error with message ', () => {
+        test('not passing video and audio property results in type error with message', () => {
             const stream = fake.getUserMedia({});
             return expect(stream).rejects.toThrow(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
         });
@@ -144,8 +146,19 @@ describe('attach device', () => {
             return expect(stream).rejects.toBeDefined();
         });
 
+        test('return any camera device ', async () => {
+            fake.attach(anyCamera());
+            const stream = await fake.getUserMedia({ video: true });
+
+            const track = stream.getTracks()[0];
+            expect(track.id).toBeUuid()
+            expect(track.enabled).toBe(true)
+            expect(track.readyState).toBe('live')
+            expect(track.kind).toBe('video')
+        });
+
         test('return videoinput with matching device id', async () => {
-            fake.attach(anyDevice({ kind: 'videoinput', deviceId: 'attached' }));
+            fake.attach(anyCamera({ deviceId: 'attached' }));
             const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } });
             expect(stream).toBeDefined();
             expect(stream.getTracks()).toHaveLength(1)
@@ -153,6 +166,7 @@ describe('attach device', () => {
             expect(track.id).toBeUuid()
             expect(track.enabled).toBe(true)
             expect(track.readyState).toBe('live')
+            expect(track.kind).toBe('video')
         });
     });
 });

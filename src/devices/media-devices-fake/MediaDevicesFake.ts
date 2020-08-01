@@ -87,7 +87,13 @@ export class MediaDevicesFake implements MediaDevices {
         }
         const video = constraints?.video;
         if (typeof video === 'boolean') {
-            throw notImplemented('video boolean parameter not implemented');
+            const maybeDevice = this.devices.find(device => device.kind === 'videoinput');
+            if (maybeDevice === undefined) {
+                throw notImplemented('no camera found');
+            }
+            const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(maybeDevice.label, 'video'));
+            const mediaTracks = [mediaTrack]
+            return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
         }
         if (video === undefined) {
             throw notImplemented('current implementation requires a video constraint')
