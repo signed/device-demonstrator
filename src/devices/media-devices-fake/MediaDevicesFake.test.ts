@@ -18,7 +18,8 @@ const anyDevice = (override: Partial<MediaDeviceDescription> = {}): MediaDeviceD
 
 const runAndReport = async (fake: MediaDevicesFake, scenario: Scenario) => {
     const stream = fake.getUserMedia(scenario.constraints);
-    const results = await Promise.all(scenario.expected.checks.map(async check => {
+    const checks = scenario.expected.granted?.checks ?? [];
+    const results = await Promise.all(checks.map(async check => {
         return {
             what: check.what,
             details: await check.predicate(stream)
