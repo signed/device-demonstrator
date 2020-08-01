@@ -1,3 +1,4 @@
+import 'jest-extended';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
 import { anyMediaStreamTrack } from './MediaStreamTrackMother';
 
@@ -38,12 +39,13 @@ describe('MediaStreamFake', () => {
     test('remove track', () => {
         const one = anyMediaStreamTrack();
         const two = anyMediaStreamTrack();
-        const fake = new MediaStreamFake(mediaStreamId(), [one, two]);
+        const three = anyMediaStreamTrack();
+        const fake = new MediaStreamFake(mediaStreamId(), [one, two, three]);
         const notIncluded = anyMediaStreamTrack();
         fake.removeTrack(notIncluded);
-        expect(fake.getTracks()).toEqual([one, two]);
-        fake.removeTrack(one);
-        expect(fake.getTracks()).toEqual([two]);
+        expect(fake.getTracks()).toIncludeSameMembers([one, two, three]);
+        fake.removeTrack(two);
+        expect(fake.getTracks()).toIncludeSameMembers([one, three]);
     });
 });
 
