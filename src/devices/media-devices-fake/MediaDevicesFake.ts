@@ -36,10 +36,10 @@ export class MediaDevicesFake implements MediaDevices {
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
         if (options) {
-            notImplemented()
+            throw notImplemented()
         }
         if (type !== 'devicechange') {
-            notImplemented()
+            throw notImplemented()
         }
         this.deviceChangeListeners.push(listener);
     }
@@ -49,10 +49,10 @@ export class MediaDevicesFake implements MediaDevices {
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
     removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
         if (options) {
-            notImplemented()
+            throw notImplemented()
         }
         if (type !== 'devicechange') {
-            notImplemented()
+            throw notImplemented()
         }
         const index = this.deviceChangeListeners.indexOf(listener);
         if (index >= 0) {
