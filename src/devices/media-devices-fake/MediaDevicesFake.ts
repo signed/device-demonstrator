@@ -1,3 +1,4 @@
+import { Deferred } from './Deffered';
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
@@ -96,7 +97,7 @@ export class MediaDevicesFake implements MediaDevices {
         if (typeof video === 'boolean') {
             const maybeDevice = this.devices.find(device => device.kind === 'videoinput');
             if (maybeDevice === undefined) {
-                return Promise.reject(new DOMException('Requested device not found'))
+                return Promise.reject(new DOMException('Requested device not found'));
             }
             const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(maybeDevice.label, 'video'));
             const mediaTracks = [mediaTrack];
@@ -115,7 +116,7 @@ export class MediaDevicesFake implements MediaDevices {
         const requestedKind = 'videoinput';
         const matchingKind = this.devices.filter(device => device.kind === requestedKind);
         if (matchingKind.length === 0) {
-            return Promise.reject(new DOMException('Requested device not found'))
+            return Promise.reject(new DOMException('Requested device not found'));
         }
         let device = matchingKind.find(device => device.deviceId === video.deviceId);
         if (device === undefined) {
@@ -124,12 +125,14 @@ export class MediaDevicesFake implements MediaDevices {
         //todo permission management
         const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(device.label, 'video'));
         const mediaTracks = [mediaTrack];
-        return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
+        const deferred = new Deferred<MediaStream>();
+        deferred.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
+        return deferred.promise;
     }
 
-    public noDevicesAttached(){
+    public noDevicesAttached() {
         this.devices.map(device => toMediaDeviceDescription(device))
-            .forEach(descriptor => this.remove(descriptor))
+            .forEach(descriptor => this.remove(descriptor));
     }
 
     public attach(toAdd: MediaDeviceDescription) {
