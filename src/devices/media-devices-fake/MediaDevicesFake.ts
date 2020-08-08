@@ -97,7 +97,7 @@ export class MediaDevicesFake implements MediaDevices {
         if (typeof video === 'boolean') {
             const maybeDevice = this.devices.find(device => device.kind === 'videoinput');
             if (maybeDevice === undefined) {
-                return Promise.reject(new DOMException('Requested device not found'));
+                return Promise.reject(new DOMException('Requested device not found', 'NotFoundError'));
             }
             const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(maybeDevice.label, 'video'));
             const mediaTracks = [mediaTrack];

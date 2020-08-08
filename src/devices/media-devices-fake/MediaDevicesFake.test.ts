@@ -3,6 +3,8 @@ import { MediaDevicesFake } from './MediaDevicesFake';
 import { allConstraintsFalse, passUndefined, Scenario, requestedDeviceTypeNotAttached, noDeviceWithDeviceId } from '../test-rig/Scenarios';
 import '../../to-be-uuid';
 import '../../to-include-video-track';
+import '../../dom-exception';
+import 'jest-extended'
 
 // this looks interesting
 // https://github.com/fippo/dynamic-getUserMedia/blob/master/content.js
@@ -145,9 +147,9 @@ describe('attach device', () => {
         });
 
         describe('not device of this type is attached', () => {
-            test('return a DOMException', () => {
+            test('return a DOMException', async () => {
                 const stream = fake.getUserMedia(requestedDeviceTypeNotAttached.constraints);
-                return expect(stream).rejects.toThrow(new DOMException(`Requested device not found`));
+                await expect(stream).rejects.domException(`Requested device not found`, 'NotFoundError');
             });
 
             test('scenario', async () => {
