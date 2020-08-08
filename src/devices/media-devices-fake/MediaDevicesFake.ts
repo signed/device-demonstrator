@@ -2,7 +2,7 @@ import { Deferred } from './Deffered';
 import { MediaDeviceDescription } from './MediaDeviceDescription';
 import { MediaDeviceInfoFake } from './MediaDeviceInfoFake';
 import { MediaStreamFake, mediaStreamId } from './MediaStreamFake';
-import { initialMediaStreamTrackProperties, MediaStreamTrackFake } from './MediaStreamTrackFake';
+import { initialMediaStreamTrackProperties, MediaStreamTrackFake, TrackKind } from './MediaStreamTrackFake';
 import { notImplemented } from './not-implemented';
 
 type DeviceChangeListener = (this: MediaDevices, ev: Event) => any
@@ -75,6 +75,34 @@ const selectSettings = (mediaTrackConstraints: MediaTrackConstraints | boolean, 
     return viableDevice[0].device;
 };
 
+const trackConstraintsFrom = (constraints: MediaStreamConstraints): { mediaTrackConstraints: boolean | MediaTrackConstraints, trackKind: TrackKind, deviceKind: MediaDeviceKind } => {
+    if (constraints.video) {
+        const mediaTrackConstraints = constraints.video;
+        const trackKind = 'video';
+        const deviceKind = 'videoinput';
+        return {
+            mediaTrackConstraints,
+            trackKind,
+            deviceKind
+        };
+    }
+    if (constraints.audio) {
+        if (constraints.video) {
+            const mediaTrackConstraints = constraints.video;
+            const trackKind = 'audio';
+            const deviceKind = 'audioinput';
+            return {
+                mediaTrackConstraints,
+                trackKind,
+                deviceKind
+            };
+        }
+    }
+
+    throw new Error('with the current assumptions this should not happen');
+
+};
+
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
@@ -138,23 +166,21 @@ export class MediaDevicesFake implements MediaDevices {
             (constraints.video === false && constraints.audio === false)) {
             return Promise.reject(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
         }
-        if (constraints.audio) {
-            throw notImplemented('audio constraint not implemented');
+        if (constraints.audio !== undefined && constraints.video !== undefined) {
+            throw notImplemented('at the moment there is no support to request audio and video at the same time');
         }
-        const video = constraints.video;
-        if (video === undefined) {
-            throw notImplemented('current implementation requires a video constraint');
-        }
+        const { mediaTrackConstraints, trackKind, deviceKind } = trackConstraintsFrom(constraints);
 
-        const videoDevices = this.devices.filter(device => device.kind === 'videoinput');
-        if (videoDevices.length === 0) {
+        const devices = this.devices.filter(device => device.kind === deviceKind);
+        if (devices.length === 0) {
             return Promise.reject(new DOMException('Requested device not found', 'NotFoundError'));
         }
-        const selectedDevice = selectSettings(video, videoDevices);
+        const selectedDevice = selectSettings(mediaTrackConstraints, devices);
         if (selectedDevice === undefined) {
             throw notImplemented('should this be an over constrained error?');
         }
-        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, 'video'));
+
+        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind));
         const mediaTracks = [mediaTrack];
 
         const deferred = new Deferred<MediaStream>();
