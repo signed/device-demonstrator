@@ -63,6 +63,18 @@ class ConstrainSet {
     }
 }
 
+const selectSettings = (mediaTrackConstraints: MediaTrackConstraints | boolean, devices: MediaDeviceInfoFake[]): MediaDeviceInfoFake | void => {
+    const constraintSet = new ConstrainSet(mediaTrackConstraints);
+    const viableDevice = devices.map((device) => {
+        return {
+            device,
+            fitness: constraintSet.fitnessDistanceFor(device)
+        };
+    }).filter((scoredDevice) => scoredDevice.fitness !== Infinity);
+    viableDevice.sort((a, b) => a.fitness - b.fitness);
+    return viableDevice[0].device;
+};
+
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
@@ -137,25 +149,15 @@ export class MediaDevicesFake implements MediaDevices {
             throw notImplemented('current implementation requires a video constraint');
         }
 
-        const requestedKind = 'videoinput';
-        const trackKind = 'video';
-        const videoConstraintSet = new ConstrainSet(video);
-        const videoDevices = this.devices.filter(device => device.kind === requestedKind);
+        const videoDevices = this.devices.filter(device => device.kind === 'videoinput');
         if (videoDevices.length === 0) {
             return Promise.reject(new DOMException('Requested device not found', 'NotFoundError'));
         }
-        const viableDevice = videoDevices.map((device) => {
-            return {
-                device,
-                fitness: videoConstraintSet.fitnessDistanceFor(device)
-            };
-        }).filter((scoredDevice) => scoredDevice.fitness !== Infinity);
-        viableDevice.sort((a, b) => a.fitness - b.fitness);
-        if (viableDevice.length === 0) {
+        const selectedDevice = selectSettings(video, videoDevices);
+        if (selectedDevice === undefined) {
             throw notImplemented('should this be an over constrained error?');
         }
-        const selectedDevice = viableDevice[0].device;
-        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind));
+        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, 'video'));
         const mediaTracks = [mediaTrack];
 
         const deferred = new Deferred<MediaStream>();
