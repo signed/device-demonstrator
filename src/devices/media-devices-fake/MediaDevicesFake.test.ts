@@ -189,11 +189,14 @@ describe('attach device', () => {
         });
 
         test('return videoinput with matching device id', async () => {
-            fake.attach(anyCamera({ deviceId: 'attached' }));
+            fake.attach(anyCamera({ deviceId: 'not this one' }));
+            fake.attach(anyCamera({ deviceId: 'attached', label: 'match' }));
+            fake.attach(anyCamera({ deviceId: 'nope' }));
             const stream = await fake.getUserMedia({ video: { deviceId: 'attached' } });
             expect(stream).toBeDefined();
             expect(stream.getTracks()).toHaveLength(1);
             const track = stream.getTracks()[0];
+            expect(track.label).toBe('match')
             expect(track.id).toBeUuid();
             expect(track.enabled).toBe(true);
             expect(track.readyState).toBe('live');

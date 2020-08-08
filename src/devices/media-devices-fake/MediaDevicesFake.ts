@@ -20,6 +20,49 @@ export const uuidV4 = () => {
 
 const toMediaDeviceDescription = (device: MediaDeviceInfoFake): MediaDeviceDescription => ({ deviceId: device.deviceId, groupId: device.groupId, label: device.label, kind: device.kind });
 
+const positiveNumericNonRequiredConstraint = ['height', 'width', 'frameRate', 'aspectRatio', 'sampleRate'] as const;
+type PositiveNumericNonRequiredConstraintName = typeof positiveNumericNonRequiredConstraint[number];
+const _fit = (actual: number, ideal: number): number => (actual == ideal) ? 0 : Math.abs(actual - ideal) / Math.max(Math.abs(actual), Math.abs(ideal));
+
+const stringEnumNonRequiredConstraint = ['deviceId', 'groupId', 'facingMode', 'resizeMode', 'echoCancellation'];
+
+type StringEnumNonRequiredConstraintName = typeof stringEnumNonRequiredConstraint[number]
+const fit2 = (actual: string, ideal: string): number => (actual === ideal) ? 0 : 1;
+
+type ConstraintName = PositiveNumericNonRequiredConstraintName | StringEnumNonRequiredConstraintName;
+
+type Constraint = (device: MediaDeviceInfoFake) => number
+
+class ConstrainSet {
+    private readonly constraints: Constraint[] = [];
+
+    constructor(requested: boolean | MediaTrackConstraints) {
+        if (typeof requested === 'boolean') {
+            return;
+        }
+        const passedProperties = Object.getOwnPropertyNames(requested);
+        const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
+        const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
+        if (unsupported.length) {
+            throw notImplemented(`constraint not implemented ${unsupported}`);
+        }
+        const deviceId = requested.deviceId;
+        if (deviceId !== undefined) {
+            if (typeof deviceId !== 'string') {
+                throw notImplemented('only basic deviceId of type string is supported at the moment');
+            }
+            this.constraints.push((device: MediaDeviceInfoFake) => {
+                return fit2(device.deviceId, deviceId);
+            });
+        }
+
+    }
+
+    fitnessDistanceFor(device: MediaDeviceInfoFake): number {
+        return this.constraints.reduce((acc, curr) => acc + curr(device), 0);
+    }
+}
+
 export class MediaDevicesFake implements MediaDevices {
     private readonly deviceChangeListeners: DeviceChangeListener [] = [];
     private readonly devices: MediaDeviceInfoFake [] = [];
@@ -94,37 +137,27 @@ export class MediaDevicesFake implements MediaDevices {
             throw notImplemented('current implementation requires a video constraint');
         }
 
-        if (typeof video === 'boolean') {
-            const maybeDevice = this.devices.find(device => device.kind === 'videoinput');
-            if (maybeDevice === undefined) {
-                return Promise.reject(new DOMException('Requested device not found', 'NotFoundError'));
-            }
-            const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(maybeDevice.label, 'video'));
-            const mediaTracks = [mediaTrack];
-            return Promise.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
-        }
-
-        const passedProperties = Object.getOwnPropertyNames(video);
-        const implementedProperties: (keyof MediaTrackConstraintSet) [] = ['deviceId'];
-        const unsupported = passedProperties.filter(arg => !implementedProperties.some(im => im === arg));
-        if (unsupported.length) {
-            throw notImplemented(`constraint not implemented ${unsupported}`);
-        }
-        if (video.deviceId === undefined) {
-            throw notImplemented('current implementation requires a deviceId');
-        }
         const requestedKind = 'videoinput';
-        const matchingKind = this.devices.filter(device => device.kind === requestedKind);
-        if (matchingKind.length === 0) {
-            return Promise.reject(new DOMException('Requested device not found'));
+        const trackKind = 'video';
+        const videoConstraintSet = new ConstrainSet(video);
+        const videoDevices = this.devices.filter(device => device.kind === requestedKind);
+        if (videoDevices.length === 0) {
+            return Promise.reject(new DOMException('Requested device not found', 'NotFoundError'));
         }
-        let device = matchingKind.find(device => device.deviceId === video.deviceId);
-        if (device === undefined) {
-            device = matchingKind[0];
+        const viableDevice = videoDevices.map((device) => {
+            return {
+                device,
+                fitness: videoConstraintSet.fitnessDistanceFor(device)
+            };
+        }).filter((scoredDevice) => scoredDevice.fitness !== Infinity);
+        viableDevice.sort((a, b) => a.fitness - b.fitness);
+        if (viableDevice.length === 0) {
+            throw notImplemented('should this be an over constrained error?');
         }
-        //todo permission management
-        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(device.label, 'video'));
+        const selectedDevice = viableDevice[0].device;
+        const mediaTrack = new MediaStreamTrackFake(initialMediaStreamTrackProperties(selectedDevice.label, trackKind));
         const mediaTracks = [mediaTrack];
+
         const deferred = new Deferred<MediaStream>();
         deferred.resolve(new MediaStreamFake(mediaStreamId(), mediaTracks));
         return deferred.promise;
