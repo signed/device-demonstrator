@@ -138,13 +138,10 @@ export class MediaDevicesFake implements MediaDevices {
             (constraints.video === false && constraints.audio === false)) {
             return Promise.reject(new TypeError(`Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested`));
         }
-        if (constraints?.peerIdentity) {
-            throw notImplemented('peerIdentity constraint not implemented');
-        }
-        if (constraints?.audio) {
+        if (constraints.audio) {
             throw notImplemented('audio constraint not implemented');
         }
-        const video = constraints?.video;
+        const video = constraints.video;
         if (video === undefined) {
             throw notImplemented('current implementation requires a video constraint');
         }
