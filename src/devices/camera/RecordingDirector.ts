@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 export type Device = Pick<MediaDeviceInfo, 'groupId' | 'deviceId' | 'kind' | 'label'>;
 
@@ -136,7 +136,7 @@ export class RecordingDirector {
         let subscriptionDetails = {
             deviceIdentifier: device.deviceId,
             stream: this.streamForDevice(device),
-            subscriptionIdentifier: uuid()
+            subscriptionIdentifier: v4()
         };
         const subscription = new DefaultMediaStreamSubscription(this, subscriptionDetails);
         this.subscriptionLedger.addSubscriber(subscription);
