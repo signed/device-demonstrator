@@ -1705,10 +1705,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@signed/media-devices-fake@0.0.6":
-  version "0.0.6"
-  resolved "http://localhost:4873/@signed%2fmedia-devices-fake/-/media-devices-fake-0.0.6.tgz#cf7fd442b74127fc5dc607903401d7203d5fb1e6"
-  integrity sha512-3c7Z2MPZPJKHdw128O02Cu5hFdFrxrKCT/u+jCEvvYhRmhsdW9qO1ZKN3Y+v91ytGOJ/SAduPPYModuTHZnhFw==
+"@signed/media-devices-fake@0.0.7":
+  version "0.0.7"
+  resolved "http://localhost:4873/@signed%2fmedia-devices-fake/-/media-devices-fake-0.0.7.tgz#923c6c6c21e62a01cccfa85c4cbecc52b863ff93"
+  integrity sha512-92q0u87ecYQ54BmZZ0Wd/6GRlYJT1VsA66xgjS0C9TZ5PUp2L7RPGgP9F7PhqDU4zxVv+anyKtFIQqcaZtGh7Q==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"

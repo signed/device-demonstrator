@@ -2,7 +2,7 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { Hide } from '../camera/Hide';
 import { ErrorView } from './ErrorView';
 import { Json } from './Json';
-import { MediaStreamCheckResult, requestedDeviceTypeNotAttached, scenarios } from './Scenarios';
+import { MediaStreamCheckResult, scenarios } from '@signed/media-devices-fake';
 import { StreamView } from './StreamView';
 
 export interface Result {
@@ -21,7 +21,7 @@ const reconstructPromiseFrom = (result: GetUserMediaResult): Promise<MediaStream
 
 const initial: { permissionState: PermissionState, scenarioSummary: string } = {
     permissionState: 'granted',
-    scenarioSummary: requestedDeviceTypeNotAttached.summary
+    scenarioSummary: scenarios.requestedDeviceTypeNotAttached.summary
 };
 
 export const TestRig: React.FC<{}> = () => {
@@ -45,12 +45,12 @@ export const TestRig: React.FC<{}> = () => {
 
     useEffect(() => {
         if (selectedScenario === undefined) {
-            const summaries = Array.from(scenarios.keys());
+            const summaries = Array.from(scenarios.all.keys());
             const thisOne = summaries.includes(initial.scenarioSummary) ? initial.scenarioSummary : summaries[0];
             setSelectedScenario(thisOne);
             return;
         }
-        const scenarioConstrains = scenarios.get(selectedScenario)?.constraints;
+        const scenarioConstrains = scenarios.all.get(selectedScenario)?.constraints;
         const scenarioConstraintsAsString = scenarioConstrains === undefined ? 'undefined' : JSON.stringify(scenarioConstrains, null, 2);
         setConstraintsAsString(scenarioConstraintsAsString);
     }, [selectedScenario]);
@@ -78,7 +78,7 @@ export const TestRig: React.FC<{}> = () => {
     };
 
     const handleRunChecks = async () => {
-        const scenario = scenarios.get(selectedScenario ?? '');
+        const scenario = scenarios.all.get(selectedScenario ?? '');
         if (scenario === undefined || getUserMediaResult === null) {
             return;
         }
@@ -130,7 +130,7 @@ export const TestRig: React.FC<{}> = () => {
                 <select name="scenarios"
                         value={selectedScenario}
                         onChange={(e) => setSelectedScenario(e.target.value)}>
-                    {Array.from(scenarios.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}
+                    {Array.from(scenarios.all.keys()).map(summary => <option value={summary} key={summary}>{summary}</option>)}
                 </select>
             </div>
             <textarea value={constraintsAsString} onChange={(e) => setConstraintsAsString(e.target.value)}/>
