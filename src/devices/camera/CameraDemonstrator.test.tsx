@@ -1,8 +1,7 @@
 import { MatcherFunction } from '@testing-library/dom/types/matches';
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
-import { MediaDeviceDescription } from '../media-devices-fake/MediaDeviceDescription';
-import { MediaDevicesFake } from '../media-devices-fake/MediaDevicesFake';
+import { MediaDevicesFake, MediaDeviceDescription } from '@signed/media-devices-fake';
 import { CameraDemonstrator, fetchDevices } from './CameraDemonstrator';
 import { Context } from './DeviceDemonstratorContext';
 import { RecordingDirector } from './RecordingDirector';

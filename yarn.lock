@@ -1705,6 +1705,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@signed/media-devices-fake@0.0.6":
+  version "0.0.6"
+  resolved "http://localhost:4873/@signed%2fmedia-devices-fake/-/media-devices-fake-0.0.6.tgz#cf7fd442b74127fc5dc607903401d7203d5fb1e6"
+  integrity sha512-3c7Z2MPZPJKHdw128O02Cu5hFdFrxrKCT/u+jCEvvYhRmhsdW9qO1ZKN3Y+v91ytGOJ/SAduPPYModuTHZnhFw==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.1.tgz#e7df00f98a203324f6dc7cc606cad9d4a8ab2217"
