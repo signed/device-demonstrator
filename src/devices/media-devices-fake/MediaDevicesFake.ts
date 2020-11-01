@@ -14,7 +14,7 @@ export const uuidV4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = (dt + Math.random() * 16) % 16 | 0;
         dt = Math.floor(dt / 16);
-        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 };
 
@@ -22,14 +22,14 @@ const toMediaDeviceDescription = (device: MediaDeviceInfoFake): MediaDeviceDescr
 
 const positiveNumericNonRequiredConstraint = ['height', 'width', 'frameRate', 'aspectRatio', 'sampleRate'] as const;
 type PositiveNumericNonRequiredConstraintName = typeof positiveNumericNonRequiredConstraint[number];
-const _fit = (actual: number, ideal: number): number => (actual == ideal) ? 0 : Math.abs(actual - ideal) / Math.max(Math.abs(actual), Math.abs(ideal));
+const _fit = (actual: number, ideal: number): number => (actual === ideal) ? 0 : Math.abs(actual - ideal) / Math.max(Math.abs(actual), Math.abs(ideal));
 
 const stringEnumNonRequiredConstraint = ['deviceId', 'groupId', 'facingMode', 'resizeMode', 'echoCancellation'];
 
 type StringEnumNonRequiredConstraintName = typeof stringEnumNonRequiredConstraint[number]
 const fit2 = (actual: string, ideal: string): number => (actual === ideal) ? 0 : 1;
 
-type ConstraintName = PositiveNumericNonRequiredConstraintName | StringEnumNonRequiredConstraintName;
+type _ConstraintName = PositiveNumericNonRequiredConstraintName | StringEnumNonRequiredConstraintName;
 
 type Constraint = (device: MediaDeviceInfoFake) => number
 
@@ -145,7 +145,7 @@ export class MediaDevicesFake implements MediaDevices {
         }
     }
 
-    dispatchEvent(event: Event): boolean {
+    dispatchEvent(_event: Event): boolean {
         throw notImplemented();
     }
 

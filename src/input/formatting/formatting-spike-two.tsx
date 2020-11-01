@@ -11,8 +11,8 @@ interface PhoneNumberDigitsProps {
     formatter: Formatter;
 }
 
-const useFormatter = (formatter: Formatter) => {
-    const [selection, setSelection, textInputRef] = useSelection();
+const useFormatter = (_formatter: Formatter) => {
+    const [_selection, _setSelection, textInputRef] = useSelection();
     const inputRef = useCallbackRef<HTMLInputElement>(null, (newValue, lastValue) => {
         console.log(newValue, lastValue);
     });

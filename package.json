@@ -22,13 +22,25 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "eslint --ext js,ts,tsx src",
     "test": "react-scripts test --env=jest-environment-jsdom-sixteen --watchAll=false",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": ["react-app"],
+    "overrides": [
+      {
+        "files": ["**/*.ts?(x)"],
+        "rules": {
+          "no-unused-vars": "off",
+          "no-mixed-operators": "off",
+          "import/no-anonymous-default-export": "off",
+          "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+        }
+      }
+    ]
   },
   "browserslist": {
     "production": [

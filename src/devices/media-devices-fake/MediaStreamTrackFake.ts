@@ -121,18 +121,18 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
     addEventListener<K extends keyof MediaStreamTrackEventMap>(type: K, listener: (this: MediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
-    addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
+    addEventListener(_type: any, _listener: any, _options?: boolean | AddEventListenerOptions): void {
         throw notImplemented();
     }
 
     removeEventListener<K extends keyof MediaStreamTrackEventMap>(type: K, listener: (this: MediaStreamTrack, ev: MediaStreamTrackEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
-    removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
+    removeEventListener(_type: any, _listener: any, _options?: boolean | EventListenerOptions): void {
         throw notImplemented();
     }
 
-    dispatchEvent(event: Event): boolean {
+    dispatchEvent(_event: Event): boolean {
         throw notImplemented();
     }
 
@@ -145,9 +145,9 @@ export class MediaStreamTrackFake implements MediaStreamTrack {
      * For example, you may prefer high-density video but require that the frame rate be a little low to help keep the data rate low enough not overtax the network.
      * Constraints can also specify ideal and/or acceptable sizes or ranges of sizes.
      *
-     * @param constraints
+     * @param _constraints
      */
-    applyConstraints(constraints?: MediaTrackConstraints): Promise<void> {
+    applyConstraints(_constraints?: MediaTrackConstraints): Promise<void> {
         throw notImplemented();
     }
 

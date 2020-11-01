@@ -54,27 +54,27 @@ export class MediaStreamFake implements MediaStream {
     addEventListener<K extends keyof MediaStreamEventMap>(type: K, listener: (this: MediaStream, ev: MediaStreamEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, listener: EventListenerOrEventListenerObject | null, options?: boolean | AddEventListenerOptions): void;
-    addEventListener(type: any, listener: any, options?: boolean | AddEventListenerOptions): void {
+    addEventListener(_type: any, _listener: any, _options?: boolean | AddEventListenerOptions): void {
         throw notImplemented();
     }
 
     removeEventListener<K extends keyof MediaStreamEventMap>(type: K, listener: (this: MediaStream, ev: MediaStreamEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
-    removeEventListener(type: any, listener: any, options?: boolean | EventListenerOptions): void {
+    removeEventListener(_type: any, _listener: any, _options?: boolean | EventListenerOptions): void {
         throw notImplemented();
     }
 
-    dispatchEvent(event: Event): boolean {
+    dispatchEvent(_event: Event): boolean {
         throw notImplemented();
     }
 
     /**
      * Stores a copy of the MediaStreamTrack given as argument.
      * If the track has already been added to the MediaStream object, nothing happens.
-     * @param track
+     * @param _track
      */
-    addTrack(track: MediaStreamTrack): void {
+    addTrack(_track: MediaStreamTrack): void {
         throw notImplemented();
     }
 
