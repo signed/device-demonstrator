@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import SimplePeer from 'simple-peer';
 
+const allSignalData: any[] = [];
+
 // http://localhost:3000/device-demonstrator#initiator
 const peer = new SimplePeer({ initiator: window.location.hash === '#initiator' });
-peer.on('signal', (data) => console.log(JSON.stringify(data, null, 2)));
+peer.on('signal', (data) => {
+    allSignalData.push(data);
+    console.log(JSON.stringify(allSignalData, null, 2));
+});
 peer.on('connect', () => {
     // wait for 'connect' event before using the data channel
     peer.send('hey peer, how is it going?');
@@ -16,9 +21,9 @@ export const setupSimplePeerDemonstrator: () => React.FC = () => {
     return () => {
         const [dataAsString, setDataAsString] = useState<string>('whohohw');
         const handleSignalData = () => {
-            const data = JSON.parse(dataAsString);
+            const data = JSON.parse(dataAsString) as (any[]);
             setDataAsString(() => '');
-            peer.signal(data)
+            data.forEach(sig => peer.signal(sig))
         };
         return (
             <div>
