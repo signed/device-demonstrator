@@ -2,7 +2,7 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { Hide } from '../camera/Hide';
 import { ErrorView } from './ErrorView';
 import { Json } from './Json';
-import { MediaStreamCheckResult, scenarios } from '@signed/media-devices-fake';
+import { MediaStreamCheckResult, scenarios } from '@fakes/media-devices';
 import { StreamView } from './StreamView';
 
 export interface Result {

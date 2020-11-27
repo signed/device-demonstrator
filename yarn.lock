@@ -1316,6 +1316,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fakes/media-devices@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@fakes/media-devices/-/media-devices-0.1.0.tgz#c03b1ee95782af3a22b8ec317228700d913e5111"
+  integrity sha512-5aYEaDq8QdfmG9Is7yzHCmgK6sStDucQOK44Fw7TuIhwjDmII6hfwpafHkMxartIFrUUajOAHUrw+hvqEwnBCQ==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -1704,11 +1709,6 @@
     "@types/estree" "0.0.39"
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
-
-"@signed/media-devices-fake@0.0.8":
-  version "0.0.8"
-  resolved "http://localhost:4873/@signed%2fmedia-devices-fake/-/media-devices-fake-0.0.8.tgz#28ccb43d5cd4d2751b3a97558ac93fac7ac7b5f6"
-  integrity sha512-jqVfwbaJbqIPae4p/EZ7x21EtLayC0fS2RrPIGjXOzLvbbGUiaEiqF22LMhUiSo3h3+Dlf30EKg4DyAOLBjUMQ==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"

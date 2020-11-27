@@ -1,7 +1,7 @@
 import { MatcherFunction } from '@testing-library/dom/types/matches';
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
-import { MediaDevicesFake, MediaDeviceDescription } from '@signed/media-devices-fake';
+import { MediaDeviceDescription, forgeMediaDevices, allAccessAllowed, MediaDevicesControl } from '@fakes/media-devices';
 import { CameraDemonstrator, fetchDevices } from './CameraDemonstrator';
 import { Context } from './DeviceDemonstratorContext';
 import { RecordingDirector } from './RecordingDirector';
@@ -15,10 +15,10 @@ const including: (text: string) => MatcherFunction = (text: string) => {
 const mediaDevicesFake = () => {
     const backup = navigator.mediaDevices;
     return {
-        install: (): MediaDevicesFake => {
-            const mediaDevices = new MediaDevicesFake();
-            Object.assign(navigator, { mediaDevices });
-            return mediaDevices;
+        install: (): MediaDevicesControl => {
+            const control = forgeMediaDevices(allAccessAllowed());
+            Object.assign(navigator, { mediaDevices: control.mediaDevices });
+            return control;
         },
         restore: () => {
             Object.assign(navigator, { mediaDevices: backup });
@@ -28,9 +28,9 @@ const mediaDevicesFake = () => {
 
 describe('hello devices', () => {
     const fake = mediaDevicesFake();
-    let mediaDevices: MediaDevicesFake;
+    let control: MediaDevicesControl;
     beforeEach(() => {
-        mediaDevices = fake.install();
+        control = fake.install();
     });
 
     afterEach(() => {
@@ -44,7 +44,7 @@ describe('hello devices', () => {
     test('should exp', async () => {
         const recordingDirector = new RecordingDirector();
         const updateDevices = () => fetchDevices(recordingDirector);
-        mediaDevices.addEventListener('devicechange', updateDevices);
+        control.mediaDevices.addEventListener('devicechange', updateDevices);
 
         const UnderTest = () => {
             return <Context.Provider value={{ recordingDirector }}>
@@ -55,7 +55,7 @@ describe('hello devices', () => {
         const { getByText, findByText } = render(<UnderTest/>);
 
         act(() => {
-            mediaDevices.attach(camera);
+            control.attach(camera);
         });
 
         await act(async () => {
