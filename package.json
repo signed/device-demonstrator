@@ -4,17 +4,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@storybook/addon-knobs": "6.0.28",
+    "@storybook/addon-knobs": "6.1.8",
     "@types/jest": "26.0.15",
-    "@types/node": "14.14.6",
-    "@types/react": "16.9.55",
-    "@types/react-dom": "16.9.9",
-    "libphonenumber-js": "1.8.5",
+    "@types/node": "14.14.10",
+    "@types/react": "17.0.0",
+    "@types/react-dom": "17.0.0",
+    "libphonenumber-js": "1.9.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-scripts": "4.0.0",
-    "simple-peer": "9.8.0",
-    "typescript": "4.0.5",
+    "react-scripts": "4.0.1",
+    "simple-peer": "9.9.3",
+    "typescript": "4.1.2",
     "use-callback-ref": "1.2.4",
     "uuid": "8.3.1"
   },
@@ -30,15 +30,25 @@
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
-    "extends": ["react-app"],
+    "extends": [
+      "react-app"
+    ],
     "overrides": [
       {
-        "files": ["**/*.ts?(x)"],
+        "files": [
+          "**/*.ts?(x)"
+        ],
         "rules": {
           "no-unused-vars": "off",
           "no-mixed-operators": "off",
           "import/no-anonymous-default-export": "off",
-          "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+          "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+              "argsIgnorePattern": "^_",
+              "varsIgnorePattern": "^_"
+            }
+          ]
         }
       }
     ]
@@ -56,13 +66,13 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "6.0.28",
-    "@storybook/addon-links": "6.0.28",
-    "@storybook/addons": "6.0.28",
-    "@storybook/preset-create-react-app": "3.1.4",
-    "@storybook/react": "6.0.28",
-    "@testing-library/jest-dom": "5.11.5",
-    "@testing-library/react": "11.1.0",
+    "@storybook/addon-actions": "6.1.8",
+    "@storybook/addon-links": "6.1.8",
+    "@storybook/addons": "6.1.8",
+    "@storybook/preset-create-react-app": "3.1.5",
+    "@storybook/react": "6.1.8",
+    "@testing-library/jest-dom": "5.11.6",
+    "@testing-library/react": "11.2.2",
     "@types/simple-peer": "9.6.1",
     "@types/uuid": "8.3.0",
     "gh-pages": "3.1.0",
