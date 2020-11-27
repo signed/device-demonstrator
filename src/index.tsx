@@ -4,8 +4,9 @@ import './index.css';
 //import { formattedInputOne } from 'input/formatting/formatting-spike-one';
 //import { formattedInputTwo } from 'input/formatting/formatting-spike-two';
 //import { setupWebRtcDemonstrator } from 'webrtc/WebRtcDemonstrator';
-import { setupSimplePeerDemonstrator } from 'webrtc/SimplePeerDemonstrator';
-const Demonstrator = setupSimplePeerDemonstrator();
+import { setupCameraDemonstrator } from 'devices/camera/CameraDemonstrator';
+//import { setupSimplePeerDemonstrator } from 'webrtc/SimplePeerDemonstrator';
+const Demonstrator = setupCameraDemonstrator();
 
 const renderApplication = () => {
     ReactDOM.render(<div>
