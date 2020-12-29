@@ -1316,10 +1316,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@fakes/media-devices@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@fakes/media-devices/-/media-devices-0.1.0.tgz#c03b1ee95782af3a22b8ec317228700d913e5111"
-  integrity sha512-5aYEaDq8QdfmG9Is7yzHCmgK6sStDucQOK44Fw7TuIhwjDmII6hfwpafHkMxartIFrUUajOAHUrw+hvqEwnBCQ==
+"@fakes/media-devices@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@fakes/media-devices/-/media-devices-0.5.0.tgz#55049e51ed2a6071ae043a817f311c213c841359"
+  integrity sha512-eiiCcvCObtKjcdTln3Ab9y9vAXPlKKoCIeGayqe+sVRx4MZyUoyqgj0Aq8fXltK8CNnVcXzKqijG4jdVwKpfvA==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
