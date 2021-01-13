@@ -13,4 +13,17 @@ const renderApplication = () => {
         <Demonstrator/>
     </div>, document.getElementById('root'));
 };
+
+class NetworkError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
+try {
+    throw new NetworkError('Stand In')
+} catch (e){
+    console.log(e.type);
+}
+
 renderApplication();
