@@ -7,7 +7,7 @@ const context: WebRtcDemonstratorContext = {
 };
 
 const handleIceCandidate = (ice: RTCPeerConnectionIceEvent) => {
-    const data = { candidate: ice.candidate, url: ice.url };
+    const data = { candidate: ice.candidate };
     console.log('call: handleIceCandidate');
     console.log(JSON.stringify(data, null, 2));
     if (ice.candidate) {

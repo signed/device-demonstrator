@@ -3,32 +3,45 @@
   "homepage": "https://signed.github.io/device-demonstrator",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@fakes/media-devices": "0.5.0",
-    "@storybook/addon-knobs": "6.1.14",
-    "@types/jest": "26.0.20",
-    "@types/node": "14.14.22",
-    "@types/react": "17.0.0",
-    "@types/react-dom": "17.0.0",
-    "libphonenumber-js": "1.9.8",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "react-scripts": "4.0.1",
-    "simple-peer": "9.9.3",
-    "typescript": "4.1.3",
-    "use-callback-ref": "1.2.5",
-    "uuid": "8.3.2"
-  },
   "scripts": {
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint --ext js,ts,tsx src",
-    "test": "react-scripts test --env=jest-environment-jsdom-sixteen --watchAll=false",
+    "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
+  },
+  "dependencies": {
+    "@fakes/media-devices": "0.6.0",
+    "@types/jest": "26.0.24",
+    "@types/node": "16.4.12",
+    "@types/react": "17.0.15",
+    "@types/react-dom": "17.0.9",
+    "libphonenumber-js": "1.9.23",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-scripts": "4.0.3",
+    "simple-peer": "9.11.0",
+    "typescript": "4.3.5",
+    "use-callback-ref": "1.2.5",
+    "uuid": "8.3.2"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "6.3.6",
+    "@storybook/addon-knobs": "6.3.0",
+    "@storybook/addon-links": "6.3.6",
+    "@storybook/addons": "6.3.6",
+    "@storybook/preset-create-react-app": "3.2.0",
+    "@storybook/react": "6.3.6",
+    "@testing-library/jest-dom": "5.14.1",
+    "@testing-library/react": "12.0.0",
+    "@types/simple-peer": "9.11.1",
+    "@types/uuid": "8.3.1",
+    "gh-pages": "3.2.3",
+    "jest-extended": "0.11.5"
   },
   "eslintConfig": {
     "extends": [
@@ -66,22 +79,8 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@storybook/addon-actions": "6.1.14",
-    "@storybook/addon-links": "6.1.14",
-    "@storybook/addons": "6.1.14",
-    "@storybook/preset-create-react-app": "3.1.5",
-    "@storybook/react": "6.1.14",
-    "@testing-library/jest-dom": "5.11.9",
-    "@testing-library/react": "11.2.3",
-    "@types/simple-peer": "9.6.1",
-    "@types/uuid": "8.3.0",
-    "gh-pages": "3.1.0",
-    "jest-environment-jsdom-sixteen": "1.0.3",
-    "jest-extended": "0.11.5"
-  },
   "volta": {
-    "node": "14.8.0",
-    "yarn": "1.22.4"
+    "node": "14.17.3",
+    "yarn": "1.22.11"
   }
 }
