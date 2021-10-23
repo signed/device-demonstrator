@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { IceCandidates } from './IceCandidates';
-import { useForceRender } from './useForceRender';
+import { useForceRender } from '../react/hooks/useForceRender';
 
 const context: WebRtcDemonstratorContext = {
     ownIceCandidates: new IceCandidates()
@@ -42,7 +42,7 @@ type WebRtcDemonstratorContext = {
     ownIceCandidates: IceCandidates
 }
 
-const WebRtcDemonstratorContext = React.createContext<WebRtcDemonstratorContext | void>(undefined);
+const WebRtcDemonstratorContextObject = React.createContext<WebRtcDemonstratorContext | void>(undefined);
 
 const openConnection = async () => {
     console.log('whohooo');
@@ -74,7 +74,7 @@ const openConnection = async () => {
 
 
 const useOwnIceCandidates = (): IceCandidates => {
-    const flup = useContext(WebRtcDemonstratorContext);
+    const flup = useContext(WebRtcDemonstratorContextObject);
     if (flup === undefined) {
         throw new Error('There has to be a WebRtcDemonstratorContext in the parent component');
     }
@@ -92,7 +92,7 @@ const OwnIceCandidatesView: React.FC = () => {
         return () => {
             iceCandidates.removeOnAdd(addListener);
         };
-    }, [iceCandidates]);
+    }, [iceCandidates, forceRender]);
 
     return <>
         <h1>Own Ice Candidates</h1>
@@ -103,14 +103,14 @@ const OwnIceCandidatesView: React.FC = () => {
 export const setupWebRtcDemonstrator: () => React.FC = () => {
     return () => {
         return (
-            <WebRtcDemonstratorContext.Provider value={context}>
+            <WebRtcDemonstratorContextObject.Provider value={context}>
                 <div>
                     <button onClick={openConnection}>
                         Connect
                     </button>
                 </div>
                 <OwnIceCandidatesView/>
-            </WebRtcDemonstratorContext.Provider>
+            </WebRtcDemonstratorContextObject.Provider>
         );
     };
 };

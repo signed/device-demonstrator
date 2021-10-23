@@ -73,7 +73,7 @@ export const TestRig: React.FC<{}> = () => {
         if (getUserMediaResult instanceof MediaStream) {
             getUserMediaResult.getTracks().forEach(track => track.stop());
         }
-        handleClearChecks()
+        handleClearChecks();
         setGetUserMediaResult(null);
     };
 
@@ -88,7 +88,12 @@ export const TestRig: React.FC<{}> = () => {
             try {
                 result = await check.predicate(reconstructPromiseFrom(getUserMediaResult));
             } catch (e) {
-                const messages = [`check threw exception ${e.toString()}`];
+                let messages: string[];
+                if (e instanceof Error) {
+                    messages = [`check threw exception ${e.toString()}`];
+                } else {
+                    messages = ['thrown object is not an instance of Error']
+                }
                 result = { success: false, messages };
             }
             return ({
