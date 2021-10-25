@@ -1,4 +1,5 @@
 import React from 'react';
+import { BasicContextExample } from './basic-context';
 import { ContextRoot } from './context';
 
 export default {
@@ -9,3 +10,7 @@ export default {
 export const Emoji = () => (
     <ContextRoot/>
 );
+
+export const HandleMissingContext = () => {
+    return <BasicContextExample/>
+}
