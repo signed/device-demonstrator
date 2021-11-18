@@ -1,7 +1,7 @@
 import { AsYouType } from 'libphonenumber-js/max'
 import { CountryCode as LibCountryCode } from 'libphonenumber-js/types'
 import React, { ChangeEvent, useCallback } from 'react'
-import { select, Selection } from 'react/hooks/use-selection'
+import { Selection } from 'react/hooks/use-selection'
 
 export interface ToFormat<Context> {
   readonly selection: Selection

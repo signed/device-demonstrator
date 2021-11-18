@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react'
-import { MediaStreamTrackView } from './MediaStreamTrackView'
 import { VideoElement } from '../VideoElement'
+import { MediaStreamTrackView } from './MediaStreamTrackView'
 
 export interface StreamViewProps {
   stream: MediaStream | null

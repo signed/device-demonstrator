@@ -1,7 +1,7 @@
 import React, { CSSProperties, useEffect, useState } from 'react'
+import { VideoElement } from '../VideoElement'
 import { useRecordingDirector, useVideoStreamFrom } from './DeviceDemonstratorContext'
 import { Device, RecordingDirector } from './RecordingDirector'
-import { VideoElement } from '../VideoElement'
 
 export interface CameraPreviewProps {
   recordingDirector: RecordingDirector

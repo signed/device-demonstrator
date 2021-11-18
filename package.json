@@ -43,7 +43,8 @@
     "@types/uuid": "8.3.3",
     "gh-pages": "3.2.3",
     "jest-extended": "1.1.0",
-    "prettier": "2.4.1"
+    "prettier": "2.4.1",
+    "prettier-plugin-organize-imports": "2.3.4"
   },
   "eslintConfig": {
     "extends": [

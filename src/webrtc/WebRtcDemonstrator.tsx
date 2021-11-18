@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
-import { IceCandidates } from './IceCandidates'
 import { useForceRender } from '../react/hooks/useForceRender'
+import { IceCandidates } from './IceCandidates'
 
 const context: WebRtcDemonstratorContext = {
   ownIceCandidates: new IceCandidates(),

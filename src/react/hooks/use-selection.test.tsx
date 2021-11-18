@@ -1,5 +1,5 @@
-import React from 'react'
 import { render } from '@testing-library/react'
+import React from 'react'
 import { select, useSelection } from 'react/hooks/use-selection'
 
 const UseSelectionSandbox: React.FC = () => {
