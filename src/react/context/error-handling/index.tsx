@@ -1,4 +1,13 @@
-import React, { Component, createContext, ErrorInfo, ReactNode, useContext, useEffect, useState } from 'react'
+import React, {
+  Component,
+  createContext,
+  ErrorInfo,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 export const ClockTower = () => {
   const [providerBreaksWith, breakProvider] = useState<string>()
@@ -19,6 +28,7 @@ export const ClockTower = () => {
         <Tower />
         <GroundBuilding />
       </ClockProvider>
+      <FrontYard />
     </>
   )
 }
@@ -38,6 +48,10 @@ const Antenna = () => {
   return <div>antenna</div>
 }
 
+const FrontYard = () => {
+  return <div>front yard</div>
+}
+
 interface ClockValue {
   time: string
   clockBreaksWith?: string
@@ -54,9 +68,6 @@ interface ClockProviderProps {
 const useClockValue = (options: Omit<ClockProviderProps, 'children'>): ClockValue => {
   const { clockBreaksWith, providerBreaksWith } = options
   const [time, setTime] = useState('')
-  if (providerBreaksWith) {
-    throw new Error(providerBreaksWith)
-  }
   useEffect(() => {
     let timerHandle: number
     const scheduleClockUpdate = function () {
@@ -71,6 +82,11 @@ const useClockValue = (options: Omit<ClockProviderProps, 'children'>): ClockValu
       window.clearTimeout(timerHandle)
     }
   }, [])
+
+  if (providerBreaksWith) {
+    throw new Error(providerBreaksWith)
+  }
+
   return {
     time,
     clockBreaksWith,
@@ -135,8 +151,38 @@ const Clock = () => {
   return <div>Out of order</div>
 }
 
-const ClockProvider = (props: ClockProviderProps) => {
+const ClockProviderInternal = (props: WithTryCatch) => {
   const { children, ...rest } = props
-  const value = useClockValue(rest)
-  return <ClockContext.Provider value={value}>{children}</ClockContext.Provider>
+  try {
+    const value = useClockValue(rest)
+    return <ClockContext.Provider value={value}>{children}</ClockContext.Provider>
+  } catch (_) {
+    props.crashHandler()
+    return <>{children}</>
+  }
 }
+
+type CrashHandler = () => void
+
+interface WithTryCatch extends ClockProviderProps {
+  crashHandler: CrashHandler
+}
+
+const ProviderTryCatch = (props: ClockProviderProps) => {
+  const [providerCrashed, handleCrash] = useState(false)
+  const crashHandler = useCallback(() => {
+    return () => handleCrash(true)
+  }, [])
+  if (providerCrashed) {
+    return <>{props.children}</>
+  }
+
+  const { children, ...rest } = props
+  return (
+    <ClockProviderInternal crashHandler={crashHandler} {...rest}>
+      {children}
+    </ClockProviderInternal>
+  )
+}
+
+const ClockProvider = ProviderTryCatch
