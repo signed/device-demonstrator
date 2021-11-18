@@ -1,14 +1,12 @@
-import React from 'react';
+import React from 'react'
 
 export interface HideProps {
-    hide: boolean;
+  hide: boolean
 }
 
 export const Hide: React.FC<HideProps> = (props) => {
-    if (props.hide) {
-        return null;
-    }
-    return <React.Fragment>
-        {props.children}
-    </React.Fragment>;
-};
+  if (props.hide) {
+    return null
+  }
+  return <React.Fragment>{props.children}</React.Fragment>
+}

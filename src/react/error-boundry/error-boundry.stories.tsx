@@ -1,11 +1,9 @@
-import React from 'react';
-import { ErrorBoundryExample } from './error-boundry';
+import React from 'react'
+import { ErrorBoundryExample } from './error-boundry'
 
 export default {
-    title: 'ErrorBoundry',
-    component: ErrorBoundryExample
-};
+  title: 'ErrorBoundry',
+  component: ErrorBoundryExample,
+}
 
-export const Basic = () => (
-    <ErrorBoundryExample/>
-);
+export const Basic = () => <ErrorBoundryExample />

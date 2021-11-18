@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react'
 
 export const useForceRender = () => {
-    const [_, render] = useState<boolean>(true)
-    return useCallback(() => render((curr) => !curr), [])
+  const [_, render] = useState<boolean>(true)
+  return useCallback(() => render((curr) => !curr), [])
 }
