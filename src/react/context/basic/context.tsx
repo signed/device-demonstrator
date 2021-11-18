@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback, useContext, useRef, useState } from 'react';
-import { useForceRender } from '../hooks/useForceRender';
+import { useForceRender } from '../../hooks/useForceRender';
 
 interface Value {
     one: number;
