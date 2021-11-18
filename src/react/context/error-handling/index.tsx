@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import React, { Component, createContext, ErrorInfo, ReactNode, useContext, useEffect, useState } from 'react'
 
 export const ClockTower = () => {
   const [providerBreaksWith, breakProvider] = useState<string>()
@@ -13,7 +13,9 @@ export const ClockTower = () => {
       <ClockProvider clockBreaksWith={clockBreaksWith} providerBreaksWith={providerBreaksWith}>
         <Antenna />
         <Top />
-        <Clock />
+        <ClockErrorBondary recover={() => breakClock(undefined)}>
+          <Clock />
+        </ClockErrorBondary>
         <Tower />
         <GroundBuilding />
       </ClockProvider>
@@ -72,6 +74,48 @@ const useClockValue = (options: Omit<ClockProviderProps, 'children'>): ClockValu
   return {
     time,
     clockBreaksWith,
+  }
+}
+
+interface ClockErrorBondaryProps {
+  children: ReactNode
+  recover: () => void
+}
+
+interface ClockErrorBondaryState {
+  hasError: boolean
+}
+
+class ClockErrorBondary extends Component<ClockErrorBondaryProps, ClockErrorBondaryState> {
+  constructor(props: ClockErrorBondaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError(_error: Error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true }
+  }
+
+  componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {
+    // You can also log the error to an error reporting service
+    //logErrorToMyService(error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      const handleAttachDial = () => {
+        this.props.recover()
+        this.setState({ hasError: false })
+      }
+      return (
+        <>
+          <button onClick={handleAttachDial}>attach dial</button>
+          <h1>00:00</h1>
+        </>
+      )
+    }
+    return this.props.children
   }
 }
 
