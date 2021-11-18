@@ -12,7 +12,8 @@
     "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@fakes/media-devices": "0.6.0",

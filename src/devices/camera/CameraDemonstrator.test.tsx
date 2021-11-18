@@ -7,7 +7,7 @@ import { Context } from './DeviceDemonstratorContext'
 import { RecordingDirector } from './RecordingDirector'
 
 const including: (text: string) => MatcherFunction = (text: string) => {
-  return (content: String, _element: HTMLElement) => {
+  return (content: String, _element: Element | null) => {
     return content.includes(text)
   }
 }
