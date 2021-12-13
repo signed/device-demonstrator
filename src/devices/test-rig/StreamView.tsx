@@ -49,15 +49,7 @@ export const StreamView: React.FC<StreamViewProps> = (props) => {
   const tracksNode = tracks().map((track) => {
     return (
       <li key={track.id}>
-        <MediaStreamTrackView
-          enabled={track.enabled}
-          id={track.id}
-          kind={track.kind}
-          label={track.label}
-          muted={track.muted}
-          readyState={track.readyState}
-          track={track}
-        />
+        <MediaStreamTrackView track={track} />
       </li>
     )
   })
