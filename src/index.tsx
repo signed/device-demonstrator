@@ -3,11 +3,11 @@
 //import { setupWebRtcDemonstrator } from 'webrtc/WebRtcDemonstrator';
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { setupCameraDemonstrator } from './devices/camera/CameraDemonstrator'
 import './index.css'
 //import { ClockTower as Demonstrator } from './react/context/error-handling'
-//import { setupSimplePeerDemonstrator } from 'webrtc/SimplePeerDemonstrator';
-const Demonstrator = setupCameraDemonstrator()
+//import { setupSimplePeerDemonstrator } from 'webrtc/SimplePeerDemonstrator'
+import { CompoundComponent as Demonstrator } from './react/compount-components/compound-components'
+//const Demonstrator = setupCameraDemonstrator()
 
 const renderApplication = () => {
   ReactDOM.render(
